@@ -5,69 +5,141 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  /* =========================
+     Vesta Design System
+     Neutral
+     ========================= */
+  --neutral-50: #fbfbfb;
+  --neutral-100: #f3f3f3;
+  --neutral-200: #ededed;
+  --neutral-300: #e5e5e5;
+  --neutral-400: #e0e0e0;
+  --neutral-500: #d8d8d8;
+  --neutral-600: #c5c5c5;
+  --neutral-700: #999999;
+  --neutral-800: #777777;
+  --neutral-900: #5b5b5b;
+
+  /* =========================
+     Primary - Navy
+     ========================= */
+  --primary-50: #e8e8eb;
+  --primary-100: #b7b9c1;
+  --primary-200: #9497a3;
+  --primary-300: #636778;
+  --primary-400: #45495e;
+  --primary-500: #161c36;
+  --primary-600: #141931;
+  --primary-700: #101426;
+  --primary-800: #0c0f1e;
+  --primary-900: #090c17;
+
+  /* =========================
+     Secondary - Orange
+     ========================= */
+  --secondary-50: #fdefe9;
+  --secondary-100: #facdba;
+  --secondary-200: #f8b499;
+  --secondary-300: #f4926b;
+  --secondary-400: #f27d4e;
+  --secondary-500: #ef5d22;
+  --secondary-600: #d9551f;
+  --secondary-700: #aa4218;
+  --secondary-800: #833313;
+  --secondary-900: #64270e;
+
+  /* =========================
+     Semantic Tokens
+     ========================= */
+  --background: #fbfbfb;
+  --foreground: #161c36;
+
+  --card: #ffffff;
+  --card-foreground: #161c36;
+
+  --popover: #ffffff;
+  --popover-foreground: #161c36;
+
+  --primary: #161c36;
+  --primary-foreground: #ffffff;
+
+  --secondary: #ef5d22;
+  --secondary-foreground: #ffffff;
+
+  --muted: #f3f3f3;
+  --muted-foreground: #5b5b5b;
+
+  --accent: #fdefe9;
+  --accent-foreground: #aa4218;
+
+  --destructive: #d9551f;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e5e5;
+  --input: #e0e0e0;
+  --ring: #636778;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: #090c17;
+  --foreground: #fbfbfb;
+
+  --card: #101426;
+  --card-foreground: #fbfbfb;
+
+  --popover: #101426;
+  --popover-foreground: #fbfbfb;
+
+  --primary: #b7b9c1;
+  --primary-foreground: #101426;
+
+  --secondary: #f27d4e;
+  --secondary-foreground: #101426;
+
+  --muted: #141931;
+  --muted-foreground: #b7b9c1;
+
+  --accent: #45495e;
+  --accent-foreground: #fbfbfb;
+
+  --destructive: #f27d4e;
+  --destructive-foreground: #101426;
+
+  --border: #45495e;
+  --input: #45495e;
+  --ring: #9497a3;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -78,6 +150,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
