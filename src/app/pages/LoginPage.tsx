@@ -2,52 +2,97 @@ import LoginHero from "../../assets/login-hero.jpg";
 import icon from "../../assets/icon.png";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema, type LoginType } from "../../schemas/login.schema";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function LoginPage() {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginType>({
+    resolver: zodResolver(LoginSchema),
+  });
+
+  const onSubmit = async (data: LoginType) => {
+    setError("");
+    setSuccess("");
+    try {
+      console.log(data);
+
+      // Temporary API simulation
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Temporary success response
+      setSuccess("Login successful!");
+    } catch {
+      setError("Login failed. Please check your credentials and try again.");
+    }
+  };
   return (
     <div
       style={{ backgroundImage: `url(${LoginHero})` }}
-      className=" relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+      className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
     >
-    <img
-  src={icon}
-  alt="Logo"
-  className="absolute top-0 left-15 m-4 h-42 w-auto "
-/>
+      <img
+        src={icon}
+        alt="Logo"
+        className="absolute top-0 left-15 m-4 h-42 w-auto"
+      />
 
-      <h1 className="mb-6 text-2xl font-semibold text-white">
-        Login
-      </h1>
+      <h1 className="mb-6 text-2xl font-semibold text-white">Login</h1>
 
-      <form className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-white p-9 shadow-md">
-       <Input
-  type="email"
-  placeholder="Enter your email"
-  value=""
-  onChange={() => {}}
-  className="w-full box-border px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-/>
-
-<Input
-  type="password"
-  placeholder="Enter your password"
-  value=""
-  onChange={() => {}}
-  className="w-full box-border px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-/>
-<p
-//   to="/forgot-password"
-  className="text-right text-sm text-blue-600 hover:text-blue-800"
->
-  Forgot password?
-</p>
-      <Button
-  text="Login"
-  onClick={() => {}}
-  variant="primary"
-  className="w-30  text-white m-auto"
-/>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
+      >
+        <Input
+          type="email"
+          placeholder="Enter your email"
+          {...register("email")}
+          className="w-full box-border px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
+        <Input
+          type="password"
+          placeholder="Enter your password"
+          {...register("password")}
+          className="w-full box-border px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
+        <Link
+          to="/forgot-password"
+          className="text-right text-sm text-blue-600 hover:text-blue-800"
+        >
+          Forgot password?
+        </Link>
+        ```tsx
+        {error && (
+          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-600">
+            {success}
+          </p>
+        )}
+        ```
+        <Button
+          text={isSubmitting ? "Logging in..." : "Login"}
+          onClick={() => {}}
+          variant="primary"
+          disabled={isSubmitting}
+          className="w-30 text-white m-auto"
+        />
       </form>
     </div>
   );

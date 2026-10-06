@@ -1,7 +1,8 @@
-import VerifyOtpPage from "../features/auth/pages/VerifyOtpPage";
+
+import AppRoutes from "./routes/routes";
 
 function App() {
-  return <VerifyOtpPage />;
+  return <AppRoutes />;
 }
 
 export default App;

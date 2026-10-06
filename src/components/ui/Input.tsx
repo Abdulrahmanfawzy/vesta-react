@@ -1,28 +1,15 @@
-type InputProps = {
-  type?: "text" | "email" | "password";
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
-  className?: string;
-};
+import type { InputHTMLAttributes } from "react";
+
+type InputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input({
-  type = "text",
-  value,
-  onChange,
-  placeholder = "",
   className = "",
-  disabled = false,
+  ...props
 }: InputProps) {
   return (
     <input
-      type={type}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      disabled={disabled}
-      className={`${className}`}
+      {...props}
+      className={className}
     />
   );
 }
