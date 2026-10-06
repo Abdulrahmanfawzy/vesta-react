@@ -1,5 +1,7 @@
+import VerifyOtpPage from "../features/auth/pages/VerifyOtpPage";
+
 function App() {
-  return null;
+  return <VerifyOtpPage />;
 }
 
 export default App;
