@@ -47,17 +47,24 @@ export default function VerifyOtpPage() {
     }
   };
 
-  return (
-    <div
-      style={{ backgroundImage: `url(${LoginHero})` }}
-      className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
-    >
-      <img
-        src={icon}
-        alt="Logo"
-        className="absolute top-0 left-15 m-4 h-42 w-auto"
-      />
 
+return (
+  <div
+    style={{ backgroundImage: `url(${LoginHero})` }}
+    className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+  >
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-black/18" />
+
+    {/* Logo */}
+    <img
+      src={icon}
+      alt="Logo"
+      className="absolute top-0 left-15 z-10 m-4 h-42 w-auto"
+    />
+
+    {/* Content */}
+    <div className="relative z-10 flex w-full flex-col items-center">
       <h1 className="text-2xl font-semibold text-white mb-2">
         Verify OTP
       </h1>
@@ -84,6 +91,7 @@ export default function VerifyOtpPage() {
             />
           )}
         />
+
         {errors.otp && (
           <p className="text-sm text-red-500">
             {errors.otp.message}
@@ -118,5 +126,7 @@ export default function VerifyOtpPage() {
         </button>
       </form>
     </div>
-  );
+  </div>
+);
+
 }
