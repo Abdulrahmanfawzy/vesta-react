@@ -1,17 +1,28 @@
 type InputProps = {
-    value: string;
-    onChange: (value: string) => void;
-    placeholder?: string;
-    disabled?: boolean;
-}
-export default function Input({value, onChange, placeholder ='', disabled = false}: InputProps) {
+  type?: "text" | "email" | "password";
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  className?: string;
+};
+
+export default function Input({
+  type = "text",
+  value,
+  onChange,
+  placeholder = "",
+  className = "",
+  disabled = false,
+}: InputProps) {
   return (
     <input
-      type="text"
+      type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       disabled={disabled}
+      className={`${className}`}
     />
-  )
+  );
 }
