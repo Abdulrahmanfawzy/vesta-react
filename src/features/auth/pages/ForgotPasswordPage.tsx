@@ -69,13 +69,13 @@ return (
         Forgot Password
       </h1>
 
-      <p className="text-sm text-white mb-6 text-center max-w-sm">
+      <p className="text-sm font-semibold text-white mb-6 text-center max-w-sm">
         Enter your email address and we&apos;ll send you a verification code.
       </p>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
+        className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
       >
         <Controller
           name="email"

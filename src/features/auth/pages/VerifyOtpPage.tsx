@@ -69,13 +69,13 @@ return (
         Verify OTP
       </h1>
 
-      <p className="text-sm text-white mb-6 text-center max-w-sm">
-        Enter the verification code sent to your email.
-      </p>
+     <p className="text-sm font-semibold text-white mb-6 text-center max-w-sm">
+  Enter the verification code sent to your email.
+</p>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
+        className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
       >
         <Controller
           name="otp"

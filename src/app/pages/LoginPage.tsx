@@ -57,7 +57,7 @@ return (
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
+        className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
       >
         <Controller
           name="email"
