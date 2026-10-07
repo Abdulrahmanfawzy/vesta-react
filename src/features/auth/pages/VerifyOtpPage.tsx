@@ -1,25 +1,22 @@
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import LoginHero from "../../../assets/login-hero.jpg";
-// import Input from "../../../components/ui/Input";
-import Button from "../../../components/ui/Button";
-import icon from "../../../assets/icon.png";
+import LoginHero from "@/assets/login-hero.jpg";
+import Button from "@/components/ui/Button";
+import icon from "@/assets/icon.png";
 
 import {
   VerifyOtpSchema,
   type VerifyOtpType,
-} from "../../../schemas/verifyOtp.schema";
+} from "@/schemas/verifyOtp.schema";
+
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-export default function VerifyOtpPage() {
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
+export default function VerifyOtpPage() {
   const {
     control,
     handleSubmit,
@@ -32,33 +29,27 @@ export default function VerifyOtpPage() {
   });
 
   const onSubmit = async (data: VerifyOtpType) => {
-    setError("");
-    setSuccess("");
+    console.log(data);
 
-    try {
-      console.log(data);
+    // Temporary API simulation
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      setSuccess("OTP verified successfully!");
-    } catch {
-      setError("Failed to verify OTP. Please try again.");
-    }
+    console.log("OTP verified successfully!");
   };
 
   return (
     <div
       style={{ backgroundImage: `url(${LoginHero})` }}
-      className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+      className="relative flex min-h-screen flex-col items-center justify-center bg-cover bg-center px-4"
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/18" />
+      <div className="absolute inset-0 bg-black/40" />
 
       {/* Logo */}
       <img
         src={icon}
         alt="Logo"
-        className="absolute top-0 left-15 z-10 m-4 h-42 w-auto"
+        className="absolute left-15 top-0 z-10 m-4 h-42 w-auto"
       />
 
       {/* Content */}
@@ -75,42 +66,42 @@ export default function VerifyOtpPage() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
         >
-   <Controller
-  name="otp"
-  control={control}
-  render={({ field }) => (
-    <div className="flex justify-center">
-      <InputOTP
-        maxLength={4}
-        value={field.value}
-        onChange={field.onChange}
-      >
-        <InputOTPGroup>
-          <InputOTPSlot className="border border-gray-300 m-3 " index={0} />
-          <InputOTPSlot className="border border-gray-300 m-3 " index={1} />
-          <InputOTPSlot className="border border-gray-300 m-3 " index={2} />
-          <InputOTPSlot className="border border-gray-300 m-3 " index={3} />
-        </InputOTPGroup>
-      </InputOTP>
-    </div>
-  )}
-/>
+          <Controller
+            name="otp"
+            control={control}
+            render={({ field }) => (
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={4}
+                  value={field.value}
+                  onChange={field.onChange}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot
+                      index={0}
+                      className="m-3 border border-gray-300"
+                    />
+                    <InputOTPSlot
+                      index={1}
+                      className="m-3 border border-gray-300"
+                    />
+                    <InputOTPSlot
+                      index={2}
+                      className="m-3 border border-gray-300"
+                    />
+                    <InputOTPSlot
+                      index={3}
+                      className="m-3 border border-gray-300"
+                    />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+            )}
+          />
 
           {errors.otp && (
-            <p className="text-sm text-red-500">
+            <p className="text-center text-sm text-red-500">
               {errors.otp.message}
-            </p>
-          )}
-
-          {error && (
-            <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-              {error}
-            </p>
-          )}
-
-          {success && (
-            <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-600">
-              {success}
             </p>
           )}
 
