@@ -1,4 +1,3 @@
-
 type ButtonProps = {
   text: string;
   onClick: () => void;
@@ -19,14 +18,12 @@ export default function Button({
       type="submit"
       onClick={onClick}
       disabled={disabled}
-      className={`px-4 py-2 rounded ${
+      className={`rounded px-4 py-2 ${
         variant === "primary"
           ? "bg-[var(--primary-900)] text-white"
           : "bg-gray-500 text-black"
       } ${
-        disabled
-          ? "opacity-50 cursor-not-allowed"
-          : "cursor-pointer"
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
       } ${className}`}
     >
       {text}
