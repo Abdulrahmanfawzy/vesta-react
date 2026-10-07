@@ -1,12 +1,9 @@
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { OverviewPage } from '@/features/overview/pages/OverviewPage';
+import { RouterProvider } from "react-router-dom";
+
+import { router } from "./routes/routes";
 
 function App() {
-  return (
-    <DashboardLayout>
-      <OverviewPage />
-    </DashboardLayout>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
