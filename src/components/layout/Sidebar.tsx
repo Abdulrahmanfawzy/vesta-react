@@ -7,18 +7,21 @@ import {
   Settings,
   type LucideIcon,
 } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+
+import { PATHS } from '@/app/routes/paths';
 
 type NavigationItem = {
   label: string;
   icon: LucideIcon;
-  active?: boolean;
+  to?: string;
 };
 
 const navigationItems: NavigationItem[] = [
   {
     label: 'Overview',
     icon: ReceiptText,
-    active: true,
+    to: PATHS.overview,
   },
   {
     label: 'Analysis',
@@ -68,25 +71,43 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <nav className="flex flex-col items-center gap-2 pt-16">
           {navigationItems.map((item) => {
             const Icon = item.icon;
+            const className =
+              'group flex w-full shrink-0 flex-col items-center gap-0.5 py-1.5 text-[9px] leading-tight transition-colors';
 
-            return (
-              <button
-                key={item.label}
-                type="button"
-                className={[
-                  'group flex w-full shrink-0 flex-col items-center gap-0.5 py-1.5 text-[9px] leading-tight transition-colors',
-                  item.active
-                    ? 'text-secondary'
-                    : 'text-white/70 hover:text-white',
-                ].join(' ')}
-                onClick={onClose}
-              >
+            const content = (
+              <>
                 <span className="flex lg:size-7.5 sm:size-6 items-center justify-center rounded-lg 
                 transition-colors group-hover:bg-white/10">
                   <Icon />
                 </span>
 
                 <span className="lg:text-sm sm:text-xs">{item.label}</span>
+              </>
+            );
+
+            return item.to ? (
+              <NavLink
+                key={item.label}
+                to={item.to}
+                end
+                className={({ isActive }) =>
+                  [
+                    className,
+                    isActive ? 'text-secondary' : 'text-white/70 hover:text-white',
+                  ].join(' ')
+                }
+                onClick={onClose}
+              >
+                {content}
+              </NavLink>
+            ) : (
+              <button
+                key={item.label}
+                type="button"
+                className={`${className} text-white/70 hover:text-white`}
+                onClick={onClose}
+              >
+                {content}
               </button>
             );
           })}

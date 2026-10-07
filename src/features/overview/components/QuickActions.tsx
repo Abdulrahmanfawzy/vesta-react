@@ -10,7 +10,6 @@ import {
   CardContent,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 import { quickActions } from '../constants/overview-data';
 
@@ -33,23 +32,22 @@ export function QuickActions() {
           const Icon = actionIcons[action.action];
 
           return (
-            <Button
+            <button
+              type="button"
               key={action.action}
-              variant="ghost"
               title={action.description}
-              className="h-31 flex-col gap-2 rounded-xl bg-white px-2 text-center 
-              text-[10px] font-medium text-[#161c36] shadow-[0_3px_12px_rgba(0,0,0,0.08)] hover:bg-neutral-50"
+              className="inline-flex h-31 flex-col items-center justify-center gap-2 rounded-xl bg-white px-2 text-center text-[10px] font-medium text-[#161c36] shadow-[0_3px_12px_rgba(0,0,0,0.08)] hover:bg-neutral-50"
             >
               <Icon
-                size={26}
-                strokeWidth={1.7}
-                className="text-secondary sm:size-20"
+                // size={26}
+                // strokeWidth={1.7}
+                className="text-secondary  sm:size-20 lg:size-26"
               />
 
               <span className="whitespace-normal leading-tight lg:text-[16px] sm:text-xs">
                 {action.label}
               </span>
-            </Button>
+            </button>
           );
         })}
       </CardContent>

@@ -1,15 +1,10 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
+import { Outlet } from "react-router-dom";
 
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 
-type DashboardLayoutProps = {
-  children: ReactNode;
-};
-
-export function DashboardLayout({
-  children,
-}: DashboardLayoutProps) {
+export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -27,7 +22,7 @@ export function DashboardLayout({
 
         <main className="p-12 ps-20 sm:p-6 lg:p-8">
           <div className="mx-auto w-full max-w-[1440px]">
-            {children}
+            <Outlet />
           </div>
         </main>
       </div>

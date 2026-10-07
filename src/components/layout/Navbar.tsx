@@ -8,7 +8,6 @@ import {
   Avatar,
   AvatarFallback,
 } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 
 type NavbarProps = {
   onToggleSidebar: () => void;
@@ -23,16 +22,15 @@ export function Navbar({
     <header className="sticky top-0 z-30 flex h-15.5 lg:h-27.5 items-center justify-between border-b 
     border-neutral-200 bg-white px-4 sm:px-6 lg:p-8 ">
       <div className="flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
+          type="button"
           className="lg:hidden"
           aria-label={isSidebarOpen ? 'Close navigation' : 'Open navigation'}
           aria-expanded={isSidebarOpen}
           onClick={onToggleSidebar}
         >
           {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-        </Button>
+        </button>
 
         <div className="flex flex-col py-4">
           <h1 className=" font-semibold tracking-tight text-primary lg:text-[36px] sm:text-[20px]">
@@ -46,14 +44,13 @@ export function Navbar({
       </div>
 
       <div className="flex items-center gap-3">
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full border-neutral-200 lg:size-12.5 sm:size-10"
+        <button
+          type="button"
+          className="rounded-full border border-neutral-200 lg:size-12.5 sm:size-10"
           aria-label="Notifications"
         >
           <Bell size={24} />
-        </Button>
+        </button>
 
         <Avatar className="lg:size-18.5 sm:size-12.5">
           <AvatarFallback className="bg-primary text-white">
