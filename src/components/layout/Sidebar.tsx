@@ -1,4 +1,4 @@
-import logo from '@/assets/b321ca5a3c314e620c5ad260e856babb89b6b16c.png';
+import logo from "@/assets/b321ca5a3c314e620c5ad260e856babb89b6b16c.png";
 import {
   BarChart3,
   LogOut,
@@ -6,10 +6,10 @@ import {
   RotateCcw,
   Settings,
   type LucideIcon,
-} from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
 
-import { PATHS } from '@/app/routes/paths';
+import { PATHS } from "@/app/routes/paths";
 
 type NavigationItem = {
   label: string;
@@ -19,20 +19,21 @@ type NavigationItem = {
 
 const navigationItems: NavigationItem[] = [
   {
-    label: 'Overview',
+    label: "Overview",
     icon: ReceiptText,
     to: PATHS.overview,
   },
   {
-    label: 'Analysis',
+    label: "Analysis",
     icon: BarChart3,
+    to: PATHS.analysis,
   },
   {
-    label: 'Returns',
+    label: "Returns",
     icon: RotateCcw,
   },
   {
-    label: 'Settings',
+    label: "Settings",
     icon: Settings,
   },
 ];
@@ -56,28 +57,26 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       <aside
         className={`fixed inset-y-0 left-0 z-40 lg:w-20 w-15 p-1 flex-col bg-primary text-white ${
-          isOpen ? 'flex' : 'hidden'
+          isOpen ? "flex" : "hidden"
         } lg:flex`}
         aria-label="Main navigation"
       >
         <div className="flex h-16 shrink-0 items-center justify-center">
-          <img
-            src={logo}
-            alt="Vesta"
-            className="size-29 object-contain"
-          />
+          <img src={logo} alt="Vesta" className="size-29 object-contain" />
         </div>
 
         <nav className="flex flex-col items-center gap-2 pt-16">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const className =
-              'group flex w-full shrink-0 flex-col items-center gap-0.5 py-1.5 text-[9px] leading-tight transition-colors';
+              "group flex w-full shrink-0 flex-col items-center gap-0.5 py-1.5 text-[9px] leading-tight transition-colors";
 
             const content = (
               <>
-                <span className="flex lg:size-7.5 sm:size-6 items-center justify-center rounded-lg 
-                transition-colors group-hover:bg-white/10">
+                <span
+                  className="flex lg:size-7.5 sm:size-6 items-center justify-center rounded-lg 
+                transition-colors group-hover:bg-white/10"
+                >
                   <Icon />
                 </span>
 
@@ -93,8 +92,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={({ isActive }) =>
                   [
                     className,
-                    isActive ? 'text-secondary' : 'text-white/70 hover:text-white',
-                  ].join(' ')
+                    isActive
+                      ? "text-secondary"
+                      : "text-white/70 hover:text-white",
+                  ].join(" ")
                 }
                 onClick={onClose}
               >

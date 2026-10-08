@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import LoginHero from "@/assets/login-hero.jpg";
 import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import {Button} from "@/components/ui/button";
 import icon from "@/assets/icon.png";
 
 import {

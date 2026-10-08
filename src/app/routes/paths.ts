@@ -5,4 +5,5 @@ export const PATHS = {
 
   dashboard: "/",
   overview: "/overview",
+  analysis: "/analysis",
 } as const;
