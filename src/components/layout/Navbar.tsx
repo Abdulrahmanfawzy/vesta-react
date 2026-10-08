@@ -8,6 +8,8 @@ import {
   Avatar,
   AvatarFallback,
 } from '@/components/ui/avatar';
+import { useLocation } from "react-router-dom";
+import { PATHS } from "@/app/routes/paths";
 
 type NavbarProps = {
   onToggleSidebar: () => void;
@@ -18,6 +20,12 @@ export function Navbar({
   onToggleSidebar,
   isSidebarOpen,
 }: NavbarProps) {
+
+  const { pathname } = useLocation();
+  const isAnalysis = pathname === PATHS.analysis;
+
+   const pageTitle = isAnalysis ? "Analysis": "Overview";
+
   return (
     <header className="sticky top-0 z-30 flex h-15.5 lg:h-27.5 items-center justify-between border-b 
     border-neutral-200 bg-white px-4 sm:px-6 lg:p-8 ">
@@ -34,7 +42,7 @@ export function Navbar({
 
         <div className="flex flex-col py-4">
           <h1 className=" font-semibold tracking-tight text-primary lg:text-[36px] sm:text-[20px]">
-            Overview
+             {pageTitle}
           </h1>
 
           <p className="mt-0.5 lg:text-[36px] sm:text-[20px] font-medium text-secondary">

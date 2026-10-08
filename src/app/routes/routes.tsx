@@ -4,22 +4,22 @@ import {
   type RouteObject,
 } from "react-router-dom";
 
-import LoginPage from "../pages/LoginPage";
-import OverviewPage from "../pages/OverviewPage";
-
+// import LoginPage from "../pages/LoginPage";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import VerifyOtpPage from "@/features/auth/pages/VerifyOtpPage";
 
 import {DashboardLayout} from "@/components/layout/DashboardLayout";
+import OverviewPage from "../pages/OverviewPage";
+import AnalysisPage from "../pages/AnalysisPage";
 
 import { PATHS } from "./paths";
 
 const routes: RouteObject[] = [
   // Authentication routes
-  {
-    path: PATHS.login,
-    element: <LoginPage />,
-  },
+  // {
+  //   path: PATHS.login,
+  //   element: <LoginPage />,
+  // },
   {
     path: PATHS.forgotPassword,
     element: <ForgotPasswordPage />,
@@ -47,6 +47,10 @@ const routes: RouteObject[] = [
         path: "overview",
         element: <OverviewPage />,
       },
+      {
+        path: "analysis",
+        element: <AnalysisPage />,
+      }
 
     ],
   },
