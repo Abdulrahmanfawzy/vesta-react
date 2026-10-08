@@ -2,7 +2,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import LoginHero from "@/assets/login-hero.jpg";
-import Button from "@/components/ui/Button";
+import {Button} from "@/components/ui/button";
 import icon from "@/assets/icon.png";
 
 import {
