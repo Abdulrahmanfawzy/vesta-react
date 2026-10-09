@@ -1,5 +1,7 @@
+import ReturnsMainPage from '../features/Returns/components/ReturnsMainPage';
+
 function App() {
-  return null;
+  return <ReturnsMainPage />;
 }
 
 export default App;
