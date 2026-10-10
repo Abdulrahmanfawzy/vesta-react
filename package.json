@@ -11,8 +11,6 @@
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
-    "@heroui/react": "^3.2.6",
-    "@heroui/styles": "^3.2.6",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-select": "^2.2.5",
@@ -27,8 +25,8 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.4",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.18.4",
-    "sonner": "^2.0.8",
+    "react-router-dom": "^7.6.2",
+    "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
     "xlsx": "^0.18.5",
     "zod": "^3.25.51"
