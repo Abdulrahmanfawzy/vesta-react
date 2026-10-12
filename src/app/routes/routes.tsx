@@ -8,11 +8,12 @@ import {
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import VerifyOtpPage from "@/features/auth/pages/VerifyOtpPage";
 
-import {DashboardLayout} from "@/components/layout/DashboardLayout";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import OverviewPage from "../pages/OverviewPage";
 import AnalysisPage from "../pages/AnalysisPage";
 
 import { PATHS } from "./paths";
+import ReturnsMainPage from "@/features/Returns/components/ReturnsMainPage";
 
 const routes: RouteObject[] = [
   // Authentication routes
@@ -46,6 +47,10 @@ const routes: RouteObject[] = [
       {
         path: "overview",
         element: <OverviewPage />,
+      },
+      {
+        path: "returns",
+        element: <ReturnsMainPage />,
       },
       {
         path: "analysis",

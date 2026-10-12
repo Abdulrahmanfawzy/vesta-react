@@ -31,6 +31,7 @@ const navigationItems: NavigationItem[] = [
   {
     label: "Returns",
     icon: RotateCcw,
+    to: PATHS.returns,
   },
   {
     label: "Settings",
@@ -56,9 +57,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 lg:w-20 w-15 p-1 flex-col bg-primary text-white ${
-          isOpen ? "flex" : "hidden"
-        } lg:flex`}
+        className={`fixed inset-y-0 left-0 z-40 lg:w-20 w-15 p-1 flex-col bg-primary text-white ${isOpen ? "flex" : "hidden"
+          } lg:flex`}
         aria-label="Main navigation"
       >
         <div className="flex h-16 shrink-0 items-center justify-center">
