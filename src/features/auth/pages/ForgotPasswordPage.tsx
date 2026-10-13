@@ -1,19 +1,24 @@
+
+import { useState } from "react";
+import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 
 import LoginHero from "@/assets/login-hero.jpg";
 import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/button";
 import icon from "@/assets/icon.png";
 
 import {
   ForgotPasswordSchema,
   type ForgotPasswordType,
 } from "@/schemas/forgotPassword.schema";
+import { AuthService } from "../services/auth.services";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
+  const [apiError, setApiError] = useState("");
 
   const {
     control,
@@ -27,12 +32,33 @@ export default function ForgotPasswordPage() {
   });
 
   const onSubmit = async (data: ForgotPasswordType) => {
-    console.log(data);
+    setApiError("");
 
-    // Temporary API simulation
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await AuthService.forgotPassword({
+        email: data.email,
+      });
 
-    navigate("/verify-otp");
+      if (!response.success) {
+        setApiError(
+          response.message || "Unable to send the verification code."
+        );
+        return;
+      }
+
+      navigate("/verify-otp", {
+        state: { email: data.email },
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setApiError(
+          error.response?.data?.message ||
+            "Failed to send the verification code. Please try again."
+        );
+      } else {
+        setApiError("Something went wrong. Please try again.");
+      }
+    }
   };
 
   return (
@@ -40,17 +66,14 @@ export default function ForgotPasswordPage() {
       style={{ backgroundImage: `url(${LoginHero})` }}
       className="relative flex min-h-screen flex-col items-center justify-center bg-cover bg-center px-4"
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40" />
 
-      {/* Logo */}
       <img
         src={icon}
         alt="Logo"
         className="absolute left-15 top-0 z-10 m-4 h-42 w-auto"
       />
 
-      {/* Content */}
       <div className="relative z-10 flex w-full flex-col items-center">
         <h1 className="mb-2 text-2xl font-semibold text-white">
           Forgot Password
@@ -80,6 +103,12 @@ export default function ForgotPasswordPage() {
           {errors.email && (
             <p className="text-sm text-red-500">
               {errors.email.message}
+            </p>
+          )}
+
+          {apiError && (
+            <p role="alert" className="text-sm text-red-600">
+              {apiError}
             </p>
           )}
 

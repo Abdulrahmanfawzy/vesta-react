@@ -49,3 +49,13 @@ export interface ForgotPasswordResponse {
 export interface ForgotPasswordCredentials {
   email: string;
 }
+
+export interface VerifyOtpCredentials {
+  email: string;
+  code: string;
+}
+
+export interface VerifyOtpResponse {
+  success: boolean;
+  message: string;
+}
