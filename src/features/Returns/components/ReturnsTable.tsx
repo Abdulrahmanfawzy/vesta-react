@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { ReturnRequestItem, ReturnStatus } from '../types/returns';
+import { Link } from 'react-router-dom';
 
 // 1. إضافة واجهة الـ Props
 interface ReturnsTableProps {
@@ -141,12 +142,12 @@ export const ReturnsTable: React.FC<ReturnsTableProps> = ({ onViewDetails }) => 
                   <td className="py-3 px-4 text-center">
                     {item.actionType === 'View Details' ? (
                       /* 3. ربط onClick لزر View Details هنا */
-                      <button
-                        onClick={() => onViewDetails && onViewDetails(item.id)}
+                      <Link to={`/backtosupport/${item.id}`}
+                        // onClick={() => onViewDetails && onViewDetails(item.id)}
                         className="text-indigo-600 font-medium hover:underline cursor-pointer"
                       >
                         View Details
-                      </button>
+                      </Link>
                     ) : (
                       <span className="text-gray-500 font-normal">Viewed</span>
                     )}

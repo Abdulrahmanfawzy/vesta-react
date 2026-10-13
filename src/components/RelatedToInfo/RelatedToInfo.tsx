@@ -1,35 +1,40 @@
 
 
-import React from 'react'
 
-export default function RelatedToInfo() {
+
+
+import type { SupportTicket } from "@/features/auth/types/tecketInfo.types";
+
+type RelatedToInfoProps = {
+  ticket: SupportTicket;
+};
+
+export default function RelatedToInfo({ ticket }: RelatedToInfoProps) {
   return (
     <div>
-<h2 className='text-[#161C36]'> Related information </h2>
+      <h2 className="font-semibold">Related Information</h2>
 
-<div className='flex justify-between'>
-<span className='text-gray-400'> Type  </span>
-<span className='text-gray-400'> Report isuue  </span>
+ <div className='flex justify-between'>
+ <span className='text-gray-400'> Type  </span>
+ <span > Report isuue  </span>
 
-</div>
-
-
-<div className='flex justify-between'>
-<span className='text-gray-400'> Category  </span>
-<span className='text-gray-400'>  returns & Refunds  </span>
-
-</div>
-
-
-<div className='flex justify-between'>
-<span className='text-gray-300'> Assigned To  </span>
-<span className='text-gray-300'>   Support Team  </span>
-
-</div>
+ </div>
 
 
 
+      <div className="flex justify-between">
 
+        <span className="text-gray-400">Category</span>
+        <span>{ticket.category || "—"}</span>
+      </div>
+
+      <div className="flex justify-between">
+        <span className="text-gray-400">Assigned To</span>
+    
+        
+        <span>{ticket.seller?.name || "Unassigned"}</span>
+        
+      </div>
     </div>
-  )
+  );
 }
