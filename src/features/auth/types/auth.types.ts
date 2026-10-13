@@ -15,25 +15,37 @@
 //         "refresh_token": "Nzm4tJvZ4aG6a55TQcXdh1HACJLVil8cXV1Lrsd3DNY6NxcGB5ZRTVphkwZ6tsUy"
 //     }
 // }
-export interface AuthUser{
-    id:number;
-    name:string;
-    email:string;
-    phone:string;
-    role:string;
-    avatar:string|null;
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  avatar: string | null;
 }
 
-export interface LoginResponse{
-    success:boolean;
-    message:string;
-    user:AuthUser;
-    requires_2fa:boolean;
-    access_token:string;
-    refresh_token:string;
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: AuthUser;
+    requires_2fa: boolean;
+    access_token: string;
+    refresh_token: string;
+  };
 }
-export interface LoginCredentials{
-    email:string;
-    password:string;
-    device_name:string;
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  device_name: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ForgotPasswordCredentials {
+  email: string;
 }
