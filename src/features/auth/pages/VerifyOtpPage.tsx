@@ -2,7 +2,6 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import LoginHero from "@/assets/login-hero.jpg";
-import {Button} from "@/components/ui/button";
 import icon from "@/assets/icon.png";
 
 import {
@@ -15,6 +14,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import Button from "@/components/ui/button";
 
 export default function VerifyOtpPage() {
   const {
@@ -107,7 +107,7 @@ export default function VerifyOtpPage() {
 
           <Button
             text={isSubmitting ? "Verifying..." : "Verify"}
-            onClick={() => {}}
+            onClick={() => { }}
             variant="primary"
             disabled={isSubmitting}
             className="w-full text-white"

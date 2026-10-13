@@ -1,11 +1,11 @@
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
 import Input from "@/components/ui/Input";
-import {Button} from "@/components/ui/Button";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginType } from "@/schemas/login.schema";
 import { Link } from "react-router-dom";
+import Button from "@/components/ui/button";
 
 export default function LoginPage() {
   const {
@@ -99,7 +99,7 @@ export default function LoginPage() {
 
           <Button
             text={isSubmitting ? "Logging in..." : "Login"}
-            onClick={() => {}}
+            onClick={() => { }}
             variant="primary"
             disabled={isSubmitting}
             className="m-auto w-30 text-white"
