@@ -5,7 +5,6 @@ import { useState } from "react";
 import axios from "axios";
 
 import LoginHero from "@/assets/login-hero.jpg";
-import Button from "@/components/ui/button";
 import icon from "@/assets/icon.png";
 
 import {
@@ -21,6 +20,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import Button from "@/components/ui/button";
 
 export default function VerifyOtpPage() {
   const location = useLocation();
@@ -177,7 +177,7 @@ export default function VerifyOtpPage() {
 
           <Button
             text={isSubmitting ? "Verifying..." : "Verify"}
-            onClick={handleSubmit(onSubmit)}
+            onClick={() => {}}
             variant="primary"
             disabled={isSubmitting}
             className="w-full text-white"

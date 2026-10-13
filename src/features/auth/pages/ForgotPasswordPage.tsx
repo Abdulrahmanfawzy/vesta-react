@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 
 import LoginHero from "@/assets/login-hero.jpg";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/button";
 import icon from "@/assets/icon.png";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/Input";
 
 import {
   ForgotPasswordSchema,
@@ -101,9 +101,7 @@ export default function ForgotPasswordPage() {
           />
 
           {errors.email && (
-            <p className="text-sm text-red-500">
-              {errors.email.message}
-            </p>
+            <p className="text-sm text-red-500">{errors.email.message}</p>
           )}
 
           {apiError && (
