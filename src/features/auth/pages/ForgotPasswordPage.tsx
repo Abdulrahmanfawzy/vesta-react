@@ -4,13 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 
 import LoginHero from "@/assets/login-hero.jpg";
 import Input from "@/components/ui/Input";
-import {Button} from "@/components/ui/button";
 import icon from "@/assets/icon.png";
 
 import {
   ForgotPasswordSchema,
   type ForgotPasswordType,
 } from "@/schemas/forgotPassword.schema";
+import Button from "@/components/ui/button";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
 
           <Button
             text={isSubmitting ? "Sending..." : "Send Code"}
-            onClick={() => {}}
+            onClick={() => { }}
             variant="primary"
             disabled={isSubmitting}
             className="w-full text-white"
