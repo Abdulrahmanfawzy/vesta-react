@@ -1,4 +1,3 @@
-
 import {
   createBrowserRouter,
   Navigate,
@@ -8,6 +7,7 @@ import {
 import LoginPage from "../pages/LoginPage";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import VerifyOtpPage from "@/features/auth/pages/VerifyOtpPage";
+import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
 
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import OverviewPage from "../pages/OverviewPage";
@@ -29,6 +29,10 @@ const routes: RouteObject[] = [
   {
     path: PATHS.verifyOtp,
     element: <VerifyOtpPage />,
+  },
+  {
+    path: PATHS.resetPasswordPath,
+    element: <ResetPasswordPage />,
   },
 
   // Dashboard routes

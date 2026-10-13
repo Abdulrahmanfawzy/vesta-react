@@ -14,6 +14,7 @@ import {
 } from "@/schemas/verifyOtp.schema";
 
 import { AuthService } from "@/features/auth/services/auth.services";
+import { PATHS } from "@/app/routes/paths";
 
 import {
   InputOTP,
@@ -24,6 +25,7 @@ import {
 export default function VerifyOtpPage() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const [apiError, setApiError] = useState("");
 
   const email = (
@@ -45,7 +47,9 @@ export default function VerifyOtpPage() {
     setApiError("");
 
     if (!email) {
-      setApiError("Email is missing. Please start from Forgot Password.");
+      setApiError(
+        "Email is missing. Please start from Forgot Password."
+      );
       return;
     }
 
@@ -55,21 +59,34 @@ export default function VerifyOtpPage() {
         code: data.otp,
       });
 
-      if (response.success) {
-        navigate("/reset-password", {
-          state: {
-            email,
-            code: data.otp,
-          },
-        });
-      } else {
-        setApiError(response.message || "Invalid verification code.");
+      const resetToken = response.data?.reset_token;
+
+      if (!response.success || !resetToken) {
+        setApiError(
+          response.message ||
+            "Verification failed. Reset token is missing."
+        );
+        return;
       }
+
+      navigate(PATHS.resetPasswordPath, {
+        state: {
+          resetToken,
+        },
+      });
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.message;
+
         setApiError(
-          error.response?.data?.message ||
-            "Verification failed. Please try again."
+          typeof message === "string"
+            ? message
+            : "Verification failed. Please try again."
+        );
+
+        console.error(
+          "Verify OTP API error:",
+          error.response?.data
         );
       } else {
         setApiError("Something went wrong. Please try again.");
@@ -79,7 +96,7 @@ export default function VerifyOtpPage() {
 
   const handleResendCode = () => {
     if (!email) {
-      navigate("/forgot-password");
+      navigate(PATHS.forgotPassword);
       return;
     }
 
@@ -106,7 +123,9 @@ export default function VerifyOtpPage() {
 
         <p className="mb-6 max-w-sm text-center text-sm font-semibold text-white">
           Enter the verification code sent to your email.
-          {email && <span className="mt-1 block">{email}</span>}
+          {email && (
+            <span className="mt-1 block">{email}</span>
+          )}
         </p>
 
         <form
@@ -123,20 +142,19 @@ export default function VerifyOtpPage() {
                   value={field.value}
                   onChange={field.onChange}
                 >
-                  <div className="flex justify-center gap-3 ">
-                    <InputOTPGroup >
-                    <div className="flex justify-center gap-3 ">
+                  <InputOTPGroup>
+                  <div className="flex justify-center gap-3">
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                      <InputOTPSlot
 
-                      {[0, 1, 2, 3, 4, 5].map((index) => (
-                        <InputOTPSlot
-                          key={index}
-                          index={index}
-                          className="h-12 w-12 rounded-md border  border-gray-300 text-lg font-semibold"
-                        />
-                      ))}
-                    </div>
-                    </InputOTPGroup>
-                  </div>
+                        key={index}
+                        index={index}
+                        className="h-12 w-12 rounded-md border border-gray-300 text-lg font-semibold"
+                      />
+                    ))}
+                      </div>
+
+                  </InputOTPGroup>
                 </InputOTP>
               </div>
             )}
@@ -149,7 +167,10 @@ export default function VerifyOtpPage() {
           )}
 
           {apiError && (
-            <p role="alert" className="text-center text-sm text-red-600">
+            <p
+              role="alert"
+              className="text-center text-sm text-red-600"
+            >
               {apiError}
             </p>
           )}

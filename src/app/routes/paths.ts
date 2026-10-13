@@ -2,6 +2,7 @@ export const PATHS = {
   login: "/login",
   forgotPassword: "/forgot-password",
   verifyOtp: "/verify-otp",
+  resetPasswordPath: "/reset-password",
 
   dashboard: "/",
   overview: "/overview",
