@@ -1,12 +1,6 @@
-import {
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-import type { ReturnReason } from '@/types/common.types';
+import type { ReturnReason } from "@/types/common.types";
 
 type ReturnReasonsChartProps = {
   data: ReturnReason[];
@@ -17,21 +11,19 @@ type ReturnReasonsChartProps = {
 
 export function ReturnReasonsChart({
   data,
-  title = 'RETURN REASONS',
+  title = "RETURN REASONS",
+  showDescription = false,
   showPercentages = false,
 }: ReturnReasonsChartProps) {
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <h2 className="sm:mb-2 lg:mb-4  text-center lg:text-2xl font-medium text-primary sm:text-sm">
+      <h2 className="sm:mb-2 lg:mb-4 text-center lg:text-2xl font-medium text-primary sm:text-sm">
         {title}
       </h2>
 
       <div className="flex flex-1 items-center justify-center gap-3 sm:gap-5">
         <div className="size-24 shrink-0 sm:size-28">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
@@ -45,21 +37,15 @@ export function ReturnReasonsChart({
                 stroke="none"
               >
                 {data.map((reason) => (
-                  <Cell
-                    key={reason.label}
-                    fill={reason.color}
-                  />
+                  <Cell key={reason.label} fill={reason.color} />
                 ))}
               </Pie>
 
               <Tooltip
-                formatter={(value) => [
-                  `${value}%`,
-                  'Returns',
-                ]}
+                formatter={(value) => [`${value}%`, "Returns"]}
                 contentStyle={{
                   borderRadius: 8,
-                  border: '1px solid #e5e5e5',
+                  border: "1px solid #e5e5e5",
                   fontSize: 12,
                 }}
               />
@@ -69,15 +55,10 @@ export function ReturnReasonsChart({
 
         <div className="flex min-w-0 flex-col gap-2">
           {data.map((reason) => (
-            <div
-              key={reason.label}
-              className="flex items-start gap-2"
-            >
+            <div key={reason.label} className="flex items-start gap-2">
               <span
-                className="mt-0.5 size-2.5 text-xl shrink-0 rounded-sm"
-                style={{
-                  backgroundColor: reason.color,
-                }}
+                className="mt-0.5 size-2.5 shrink-0 rounded-sm"
+                style={{ backgroundColor: reason.color }}
               />
 
               <span className="lg:text-[20px] leading-tight text-neutral-600 text-xs">
@@ -94,6 +75,12 @@ export function ReturnReasonsChart({
         </div>
       </div>
 
+      {showDescription && (
+        <div className="mt-4 space-y-1 text-xs text-neutral-600">
+          <p>• Distribution of returns by reason</p>
+          <p>• Percentage of each reason</p>
+        </div>
+      )}
     </div>
   );
 }

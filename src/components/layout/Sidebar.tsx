@@ -36,6 +36,7 @@ const navigationItems: NavigationItem[] = [
   {
     label: "Settings",
     icon: Settings,
+       to: PATHS.settings,
   },
 ];
 

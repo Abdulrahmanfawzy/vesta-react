@@ -30,3 +30,8 @@ export default function Button({
     </button>
   );
 }
+<<<<<<< HEAD
+
+export { Button, buttonVariants };
+=======
+>>>>>>> 8e740b7dfa2a7b057d034ad991f42a3ba331a891
