@@ -1,13 +1,22 @@
+
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
 import Input from "@/components/ui/Input";
-import {Button} from "@/components/ui/Button";
+
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginType } from "@/schemas/login.schema";
-import { Link } from "react-router-dom";
+import { AuthService } from "@/features/auth/services/auth.services";
+import Button from "@/components/ui/Button";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const [apiError, setApiError] = useState("");
+
   const {
     control,
     handleSubmit,
@@ -21,10 +30,58 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginType) => {
-    console.log(data);
+    setApiError("");
 
-    // Temporary API simulation
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await AuthService.login({
+        ...data,
+        device_name: "web",
+      });
+
+      if (!response.success) {
+        setApiError(response.message || "Login failed.");
+        return;
+      }
+
+      const loginResponse = response as typeof response & {
+        data?: {
+          requires_2fa?: boolean;
+          access_token?: string;
+        };
+        requires_2fa?: boolean;
+        access_token?: string;
+      };
+
+      const requires2FA =
+        loginResponse.data?.requires_2fa ?? loginResponse.requires_2fa;
+
+      if (requires2FA) {
+        navigate("/verify-otp", {
+          state: { email: data.email },
+        });
+        return;
+      }
+
+      // Authentication succeeded.
+      // Connect token handling to your auth context next.
+      const accessToken =
+        loginResponse.data?.access_token ?? loginResponse.access_token;
+
+      if (accessToken) {
+        sessionStorage.setItem("access_token", accessToken);
+      }
+
+      navigate("/dashboard");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setApiError(
+          error.response?.data?.message ||
+          "Unable to log in. Check your credentials and try again."
+        );
+      } else {
+        setApiError("Something went wrong. Please try again.");
+      }
+    }
   };
 
   return (
@@ -32,17 +89,14 @@ export default function LoginPage() {
       style={{ backgroundImage: `url(${LoginHero})` }}
       className="relative flex min-h-screen flex-col items-center justify-center bg-cover bg-center px-4"
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40" />
 
-      {/* Logo */}
       <img
         src={icon}
         alt="Logo"
         className="absolute left-15 top-0 z-10 m-4 h-42 w-auto"
       />
 
-      {/* Content */}
       <div className="relative z-10 flex w-full flex-col items-center">
         <h1 className="mb-6 text-2xl font-semibold text-white">
           Login
@@ -90,6 +144,12 @@ export default function LoginPage() {
             </p>
           )}
 
+          {apiError && (
+            <p role="alert" className="text-sm text-red-600">
+              {apiError}
+            </p>
+          )}
+
           <Link
             to="/forgot-password"
             className="text-right text-sm text-blue-600 hover:text-blue-800"
@@ -99,7 +159,7 @@ export default function LoginPage() {
 
           <Button
             text={isSubmitting ? "Logging in..." : "Login"}
-            onClick={() => {}}
+            onClick={() => { }}
             variant="primary"
             disabled={isSubmitting}
             className="m-auto w-30 text-white"
