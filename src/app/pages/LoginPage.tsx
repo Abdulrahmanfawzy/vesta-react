@@ -6,20 +6,12 @@ import axios from "axios";
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
 import Input from "@/components/ui/Input";
-<<<<<<< HEAD
-import Button from "@/components/ui/button";
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginType } from "@/schemas/login.schema";
 import { AuthService } from "@/features/auth/services/auth.services";
-=======
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema, type LoginType } from "@/schemas/login.schema";
-import { Link } from "react-router-dom";
-import Button from "@/components/ui/button";
->>>>>>> origin/dev
+import Button from "@/components/ui/Button";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -84,7 +76,7 @@ export default function LoginPage() {
       if (axios.isAxiosError(error)) {
         setApiError(
           error.response?.data?.message ||
-            "Unable to log in. Check your credentials and try again."
+          "Unable to log in. Check your credentials and try again."
         );
       } else {
         setApiError("Something went wrong. Please try again.");
