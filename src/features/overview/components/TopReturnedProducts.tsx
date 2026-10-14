@@ -10,10 +10,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { returnedProducts } from '../constants/overview-data';
+import type { ReturnedProduct } from "@/types/common.types";
+
+interface TopReturnedProductsProps {
+  data: ReturnedProduct[];
+}
 
 function ProductTrend({ values }: { values: number[] }) {
-  const data = values.map((value, index) => ({
+  const chartData = values.map((value, index) => ({
     index,
     value,
   }));
@@ -21,7 +25,7 @@ function ProductTrend({ values }: { values: number[] }) {
   return (
     <div className="h-8 w-16">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+        <LineChart data={chartData}>
           <Line
             type="monotone"
             dataKey="value"
@@ -36,35 +40,44 @@ function ProductTrend({ values }: { values: number[] }) {
   );
 }
 
-export function TopReturnedProducts() {
+export function TopReturnedProducts({ data }: TopReturnedProductsProps) {
   return (
     <Card className="h-full min-w-0">
       <div className="px-5 pt-5 text-center ">
-        <CardTitle className=' text-lg sm:text-xl lg:text-2xl'>TOP RETURNED PRODUCTS</CardTitle>
+        <CardTitle className=" text-lg sm:text-xl lg:text-2xl">
+          TOP RETURNED PRODUCTS
+        </CardTitle>
       </div>
 
       <CardContent>
         <div className="overflow-x-auto rounded-lg border border-neutral-100">
           <div className="min-w-[390px]">
-            <div className="grid grid-cols-[1.2fr_1fr_1fr_.8fr] items-center bg-neutral-200 px-3 
-            py-2 text-[13px] font-medium text-neutral-700">
+            <div
+              className="grid grid-cols-[minmax(100px,1.2fr)_minmax(30px,1fr)_minmax(30px,1fr)_minmax(64px,.8fr)] items-center bg-neutral-200 px-3 
+            py-2 text-[13px] font-medium text-neutral-700"
+            >
               <span>Product</span>
-              <span>Number of Returns</span>
-              <span>Return Rate (%)</span>
+              <span className="wrap-break-word leading-tight">
+                Number of Returns
+              </span>
+              <span className="wrap-break-word leading-tight">Return Rate (%)</span>
               <span>Trend</span>
             </div>
 
             <div className="divide-y divide-neutral-100">
-              {returnedProducts.map((product) => (
+              {data.map((product) => (
                 <div
                   key={product.name}
-                  className="grid grid-cols-[1.2fr_1fr_1fr_.8fr] items-center px-3 py-2 
-                  text-[12px] text-neutral-600"
+                  className="grid grid-cols-[minmax(100px,1.2fr)_minmax(30px,1fr)_minmax(30px,1fr)_minmax(64px,.8fr)] items-center px-3 py-2 text-[12px] text-neutral-600"
                 >
-                  <span className="font-medium text-neutral-800">
+                  <span className="flex min-w-0 items-center gap-2 font-medium text-neutral-800">
+                    <img
+                      src={product.imageUrl || undefined}
+                      alt={product.name}
+                      className="h-10 w-10 object-contain"
+                    />
                     {product.name}
                   </span>
-
                   <span>{product.returns}</span>
 
                   <span>{product.rate}%</span>

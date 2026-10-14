@@ -8,4 +8,5 @@ export const PATHS = {
   overview: "/overview",
   returns: "/returns",
   analysis: "/analysis",
+  settings: "/settings",
 } as const;
