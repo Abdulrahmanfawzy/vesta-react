@@ -1,85 +1,88 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+
 import { AuthService } from "../services/auth.services";
+
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
+
+import {
+  ResetPasswordSchema,
+  type ResetPasswordType,
+} from "@/schemas/resetPassword.schema";
 
 export default function ResetPasswordPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const resetToken = location.state?.resetToken as
-    | string
-    | undefined;
+  const resetToken = (
+    location.state as { resetToken?: string } | null
+  )?.resetToken;
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordType>({
+    resolver: zodResolver(ResetPasswordSchema),
+    defaultValues: {
+      password: "",
+      password_confirmation: "",
+    },
+  });
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    setError("");
+  const resetPasswordMutation = useMutation({
+    mutationFn: (data: ResetPasswordType) => {
+      if (!resetToken) {
+        throw new Error(
+          "Reset token is missing. Please verify your OTP again."
+        );
+      }
 
-    if (!resetToken) {
-      setError(
-        "Reset token is missing. Please verify your OTP again.",
-      );
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const response = await AuthService.resetPassword({
+      return AuthService.resetPassword({
         reset_token: resetToken,
-        password,
-        password_confirmation: confirmPassword,
+        password: data.password,
+        password_confirmation: data.password_confirmation,
       });
+    },
 
+    onSuccess: (response) => {
       if (response.success) {
         navigate("/login", { replace: true });
-        return;
       }
+    },
+  });
 
-      setError(
-        response.message || "Unable to reset password.",
-      );
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const message = err.response?.data?.message;
-
-        console.error(
-          "Reset Password API error:",
-          err.response?.status,
-          err.response?.data,
-        );
-
-        setError(
-          typeof message === "string"
-            ? message
-            : "Unable to reset password. Please try again.",
-        );
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
+  const onSubmit = (data: ResetPasswordType) => {
+    resetPasswordMutation.mutate(data);
   };
+
+  const serverMessage = axios.isAxiosError(
+    resetPasswordMutation.error
+  )
+    ? resetPasswordMutation.error.response?.data?.message
+    : resetPasswordMutation.error instanceof Error
+      ? resetPasswordMutation.error.message
+      : undefined;
+
+  const apiError = resetPasswordMutation.isError
+    ? typeof serverMessage === "string"
+      ? serverMessage
+      : "Unable to reset password. Please try again."
+    : resetPasswordMutation.isSuccess &&
+        !resetPasswordMutation.data.success
+      ? resetPasswordMutation.data.message ||
+        "Unable to reset password."
+      : "";
+
+  const error = !resetToken
+    ? "Reset token is missing. Please verify your OTP again."
+    : apiError;
+
+  const isLoading = resetPasswordMutation.isPending;
 
   return (
     <div
@@ -103,7 +106,7 @@ export default function ResetPasswordPage() {
       </p>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="relative z-10 flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-9"
       >
         <div>
@@ -118,40 +121,42 @@ export default function ResetPasswordPage() {
             id="password"
             type="password"
             autoComplete="new-password"
-            value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
-            }
-            required
-            minLength={8}
-            disabled={loading}
-            className="w-full rounded-md border p-3 outline-none focus:border-black"
             placeholder="Enter new password"
+            disabled={isLoading}
+            className="w-full rounded-md border p-3 outline-none focus:border-black disabled:opacity-50"
+            {...register("password")}
           />
+
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label
-            htmlFor="confirmPassword"
+            htmlFor="password_confirmation"
             className="mb-1 block text-sm font-medium"
           >
             Confirm Password
           </label>
 
           <input
-            id="confirmPassword"
+            id="password_confirmation"
             type="password"
             autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(event) =>
-              setConfirmPassword(event.target.value)
-            }
-            required
-            minLength={8}
-            disabled={loading}
-            className="w-full rounded-md border p-3 outline-none focus:border-black"
             placeholder="Confirm new password"
+            disabled={isLoading}
+            className="w-full rounded-md border p-3 outline-none focus:border-black disabled:opacity-50"
+            {...register("password_confirmation")}
           />
+
+          {errors.password_confirmation && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.password_confirmation.message}
+            </p>
+          )}
         </div>
 
         {error && (
@@ -165,17 +170,17 @@ export default function ResetPasswordPage() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={isLoading || !resetToken}
           className="w-full rounded-md bg-black p-3 text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Resetting..." : "Reset Password"}
+          {isLoading ? "Resetting..." : "Reset Password"}
         </button>
 
         <button
           type="button"
           onClick={() => navigate("/login")}
-          disabled={loading}
-          className="w-full p-2 text-sm text-gray-600 underline hover:text-black"
+          disabled={isLoading}
+          className="w-full p-2 text-sm text-gray-600 underline hover:text-black disabled:opacity-50"
         >
           Back to Login
         </button>

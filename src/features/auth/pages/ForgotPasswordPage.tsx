@@ -1,9 +1,8 @@
-
-import { useState } from "react";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
@@ -14,16 +13,16 @@ import {
   ForgotPasswordSchema,
   type ForgotPasswordType,
 } from "@/schemas/forgotPassword.schema";
+
 import { AuthService } from "../services/auth.services";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
-  const [apiError, setApiError] = useState("");
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ForgotPasswordType>({
     resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
@@ -31,35 +30,46 @@ export default function ForgotPasswordPage() {
     },
   });
 
-  const onSubmit = async (data: ForgotPasswordType) => {
-    setApiError("");
-
-    try {
-      const response = await AuthService.forgotPassword({
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (data: ForgotPasswordType) =>
+      AuthService.forgotPassword({
         email: data.email,
-      });
+      }),
 
+    onSuccess: (response, variables) => {
       if (!response.success) {
-        setApiError(
-          response.message || "Unable to send the verification code."
-        );
         return;
       }
 
       navigate("/verify-otp", {
-        state: { email: data.email },
+        state: { email: variables.email },
       });
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setApiError(
-          error.response?.data?.message ||
-            "Failed to send the verification code. Please try again."
-        );
-      } else {
-        setApiError("Something went wrong. Please try again.");
-      }
-    }
+    },
+  });
+
+  const onSubmit = (data: ForgotPasswordType) => {
+    forgotPasswordMutation.mutate(data);
   };
+
+  const serverMessage = axios.isAxiosError(
+    forgotPasswordMutation.error
+  )
+    ? forgotPasswordMutation.error.response?.data?.message
+    : forgotPasswordMutation.error instanceof Error
+      ? forgotPasswordMutation.error.message
+      : undefined;
+
+  const apiError = forgotPasswordMutation.isError
+    ? typeof serverMessage === "string"
+      ? serverMessage
+      : "Failed to send the verification code. Please try again."
+    : forgotPasswordMutation.isSuccess &&
+        !forgotPasswordMutation.data.success
+      ? forgotPasswordMutation.data.message ||
+        "Unable to send the verification code."
+      : "";
+
+  const isLoading = forgotPasswordMutation.isPending;
 
   return (
     <div
@@ -71,7 +81,7 @@ export default function ForgotPasswordPage() {
       <img
         src={icon}
         alt="Logo"
-        className="absolute left-15 top-0 z-10 m-4 h-42 w-auto"
+        className="absolute left-6 top-6 z-10 h-20 w-auto sm:h-28"
       />
 
       <div className="relative z-10 flex w-full flex-col items-center">
@@ -80,7 +90,8 @@ export default function ForgotPasswordPage() {
         </h1>
 
         <p className="mb-6 max-w-sm text-center text-sm font-semibold text-white">
-          Enter your email address and we&apos;ll send you a verification code.
+          Enter your email address and we&apos;ll send you a
+          verification code.
         </p>
 
         <form
@@ -92,29 +103,35 @@ export default function ForgotPasswordPage() {
             control={control}
             render={({ field }) => (
               <Input
+                {...field}
                 type="email"
                 placeholder="Enter your email"
-                {...field}
+                disabled={isLoading}
                 className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             )}
           />
 
           {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
+            <p className="text-sm text-red-500">
+              {errors.email.message}
+            </p>
           )}
 
           {apiError && (
-            <p role="alert" className="text-sm text-red-600">
+            <p
+              role="alert"
+              className="text-sm text-red-600"
+            >
               {apiError}
             </p>
           )}
 
           <Button
-            text={isSubmitting ? "Sending..." : "Send Code"}
-            onClick={() => {}}
+            text={isLoading ? "Sending..." : "Send Code"}
             variant="primary"
-            disabled={isSubmitting}
+            onClick={() => {}}
+            disabled={isLoading}
             className="w-full text-white"
           />
 
