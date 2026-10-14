@@ -1,7 +1,7 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 import LoginHero from "@/assets/login-hero.jpg";
@@ -20,13 +20,12 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+
 import Button from "@/components/ui/button";
 
 export default function VerifyOtpPage() {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [apiError, setApiError] = useState("");
 
   const email = (
     location.state as { email?: string } | null
@@ -35,7 +34,7 @@ export default function VerifyOtpPage() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<VerifyOtpType>({
     resolver: zodResolver(VerifyOtpSchema),
     defaultValues: {
@@ -43,56 +42,57 @@ export default function VerifyOtpPage() {
     },
   });
 
-  const onSubmit = async (data: VerifyOtpType) => {
-    setApiError("");
+  const verifyOtpMutation = useMutation({
+    mutationFn: (data: VerifyOtpType) => {
+      if (!email) {
+        throw new Error(
+          "Email is missing. Please start from Forgot Password."
+        );
+      }
 
-    if (!email) {
-      setApiError(
-        "Email is missing. Please start from Forgot Password."
-      );
-      return;
-    }
-
-    try {
-      const response = await AuthService.verifyOtp({
+      return AuthService.verifyOtp({
         email,
         code: data.otp,
       });
+    },
 
+    onSuccess: (response) => {
       const resetToken = response.data?.reset_token;
 
       if (!response.success || !resetToken) {
-        setApiError(
-          response.message ||
-            "Verification failed. Reset token is missing."
-        );
         return;
       }
 
       navigate(PATHS.resetPasswordPath, {
-        state: {
-          resetToken,
-        },
+        state: { resetToken },
       });
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message;
+    },
+  });
 
-        setApiError(
-          typeof message === "string"
-            ? message
-            : "Verification failed. Please try again."
-        );
-
-        console.error(
-          "Verify OTP API error:",
-          error.response?.data
-        );
-      } else {
-        setApiError("Something went wrong. Please try again.");
-      }
-    }
+  const onSubmit = (data: VerifyOtpType) => {
+    verifyOtpMutation.mutate(data);
   };
+
+  const serverMessage = axios.isAxiosError(
+    verifyOtpMutation.error
+  )
+    ? verifyOtpMutation.error.response?.data?.message
+    : verifyOtpMutation.error instanceof Error
+      ? verifyOtpMutation.error.message
+      : undefined;
+
+  const apiError = verifyOtpMutation.isError
+    ? typeof serverMessage === "string"
+      ? serverMessage
+      : "Verification failed. Please try again."
+    : verifyOtpMutation.isSuccess &&
+        (!verifyOtpMutation.data.success ||
+          !verifyOtpMutation.data.data?.reset_token)
+      ? verifyOtpMutation.data.message ||
+        "Verification failed. Reset token is missing."
+      : "";
+
+  const isLoading = verifyOtpMutation.isPending;
 
   const handleResendCode = () => {
     if (!email) {
@@ -100,7 +100,7 @@ export default function VerifyOtpPage() {
       return;
     }
 
-    setApiError("Resend Code API is not connected yet.");
+    // TODO: Connect to the resend OTP API.
   };
 
   return (
@@ -113,7 +113,7 @@ export default function VerifyOtpPage() {
       <img
         src={icon}
         alt="Logo"
-        className="absolute left-15 top-0 z-10 m-4 h-42 w-auto"
+        className="absolute left-6 top-6 z-10 h-20 w-auto sm:h-28"
       />
 
       <div className="relative z-10 flex w-full flex-col items-center">
@@ -123,6 +123,7 @@ export default function VerifyOtpPage() {
 
         <p className="mb-6 max-w-sm text-center text-sm font-semibold text-white">
           Enter the verification code sent to your email.
+
           {email && (
             <span className="mt-1 block">{email}</span>
           )}
@@ -140,20 +141,19 @@ export default function VerifyOtpPage() {
                 <InputOTP
                   maxLength={6}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    verifyOtpMutation.reset();
+                  }}
                 >
                   <InputOTPGroup>
-                  <div className="flex justify-center gap-3">
                     {[0, 1, 2, 3, 4, 5].map((index) => (
                       <InputOTPSlot
-
                         key={index}
                         index={index}
                         className="h-12 w-12 rounded-md border border-gray-300 text-lg font-semibold"
                       />
                     ))}
-                      </div>
-
                   </InputOTPGroup>
                 </InputOTP>
               </div>
@@ -176,17 +176,17 @@ export default function VerifyOtpPage() {
           )}
 
           <Button
-            text={isSubmitting ? "Verifying..." : "Verify"}
-            onClick={() => {}}
+            text={isLoading ? "Verifying..." : "Verify"}
             variant="primary"
-            disabled={isSubmitting}
+            onClick={handleSubmit(onSubmit)}
+            disabled={isLoading}
             className="w-full text-white"
           />
 
           <button
             type="button"
             onClick={handleResendCode}
-            disabled={isSubmitting}
+            disabled={isLoading}
             className="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-50"
           >
             Resend Code
@@ -196,3 +196,4 @@ export default function VerifyOtpPage() {
     </div>
   );
 }
+

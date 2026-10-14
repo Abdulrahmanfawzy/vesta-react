@@ -13,8 +13,6 @@ import ResetPasswordPage from "@/features/auth/pages/ResetPasswordPage";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import OverviewPage from "../pages/OverviewPage";
 import AnalysisPage from "../pages/AnalysisPage";
-
-import { PATHS } from "./paths";
 import ReturnsMainPage from "@/features/Returns/components/ReturnsMainPage";
 import Settings from "@/components/Settings/Settings";
 import Faqs from "@/components/Faqs/Faqs";
@@ -23,45 +21,59 @@ import BackTosupport from "@/components/BackTosupport/BackTosupport";
 
 import ReturnsTable from "@/features/Returns/components/ReturnsTable";
 
-const routes: RouteObject[] = [
-  // Authentication routes
-  {
-    path: PATHS.login,
-    element: <LoginPage />,
-  },
-  {
-    path: PATHS.forgotPassword,
-    element: <ForgotPasswordPage />,
-  },
-  {
-    path: PATHS.verifyOtp,
-    element: <VerifyOtpPage />,
-  },
-  {
-    path: PATHS.resetPasswordPath,
-    element: <ResetPasswordPage />,
-  },
+import { PATHS } from "./paths";
+import ProtectedRoute from "./ProtectedRoute";
+import PublicRoute from "./PublicRoute";
 
-  // Dashboard routes
+const routes: RouteObject[] = [
+  // Public routes: only for unauthenticated users
   {
-    path: PATHS.dashboard,
-    element: <DashboardLayout />,
+    element: <PublicRoute />,
     children: [
       {
-        index: true,
-        element: <Navigate to={PATHS.overview} replace />,
+        path: PATHS.login,
+        element: <LoginPage />,
       },
       {
-        path: "overview",
-        element: <OverviewPage />,
+        path: PATHS.forgotPassword,
+        element: <ForgotPasswordPage />,
       },
       {
-        path: "returns",
-        element: <ReturnsMainPage />,
+        path: PATHS.verifyOtp,
+        element: <VerifyOtpPage />,
       },
       {
-        path: "analysis",
-        element: <AnalysisPage />,
+        path: PATHS.resetPasswordPath,
+        element: <ResetPasswordPage />,
+      },
+    ],
+  },
+
+  // Protected routes: require authentication
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: PATHS.dashboard,
+        element: <DashboardLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to={PATHS.overview} replace />,
+          },
+          {
+            path: "overview",
+            element: <OverviewPage />,
+          },
+          {
+            path: "returns",
+            element: <ReturnsMainPage />,
+          },
+          {
+            path: "analysis",
+            element: <AnalysisPage />,
+          },
+        ],
       },
     ],
   },
@@ -69,7 +81,7 @@ const routes: RouteObject[] = [
   // Fallback
   {
     path: "*",
-    element: <Navigate to={PATHS.overview} replace />,
+    element: <Navigate to={PATHS.login} replace />,
   },
 
 

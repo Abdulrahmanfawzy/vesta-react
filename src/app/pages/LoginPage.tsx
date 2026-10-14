@@ -1,26 +1,25 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
 import Input from "@/components/ui/Input";
+import Button from "@/components/ui/button";
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginType } from "@/schemas/login.schema";
 import { AuthService } from "@/features/auth/services/auth.services";
-import Button from "@/components/ui/Button";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [apiError, setApiError] = useState("");
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -29,60 +28,72 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = async (data: LoginType) => {
-    setApiError("");
-
-    try {
-      const response = await AuthService.login({
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginType) =>
+      AuthService.login({
         ...data,
         device_name: "web",
-      });
+      }),
 
-      if (!response.success) {
-        setApiError(response.message || "Login failed.");
-        return;
-      }
+    onSuccess: (response, variables) => {
+      if (!response.success) return;
 
-      const loginResponse = response as typeof response & {
-        data?: {
-          requires_2fa?: boolean;
-          access_token?: string;
-        };
-        requires_2fa?: boolean;
-        access_token?: string;
-      };
-
-      const requires2FA =
-        loginResponse.data?.requires_2fa ?? loginResponse.requires_2fa;
-
-      if (requires2FA) {
+      if (response.data?.requires_2fa) {
         navigate("/verify-otp", {
-          state: { email: data.email },
+          state: { email: variables.email },
         });
         return;
       }
 
-      // Authentication succeeded.
-      // Connect token handling to your auth context next.
-      const accessToken =
-        loginResponse.data?.access_token ?? loginResponse.access_token;
+      const { access_token, refresh_token } = response.data ?? {};
 
-      if (accessToken) {
-        sessionStorage.setItem("access_token", accessToken);
+      if (!access_token) {
+        return;
       }
 
-      navigate("/dashboard");
-    } catch (error: unknown) {
+      sessionStorage.setItem("access_token", access_token);
+
+      if (refresh_token) {
+        sessionStorage.setItem("refresh_token", refresh_token);
+      }
+
+      navigate("/dashboard", { replace: true });
+    },
+
+    onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {
-        setApiError(
-          error.response?.data?.message ||
-          "Unable to log in. Check your credentials and try again."
-        );
+        console.error("Login API Error:", {
+          message: error.message,
+          code: error.code,
+          status: error.response?.status,
+          response: error.response?.data,
+        });
       } else {
-        setApiError("Something went wrong. Please try again.");
+        console.error("Unexpected login error:", error);
       }
-    }
+    },
+  });
+
+  const onSubmit = (data: LoginType) => {
+    if (loginMutation.isPending) return;
+
+    loginMutation.mutate(data);
   };
+
+  const serverMessage = axios.isAxiosError(loginMutation.error)
+    ? loginMutation.error.response?.data?.message
+    : undefined;
+
+  const apiError = loginMutation.isError
+    ? typeof serverMessage === "string"
+      ? serverMessage
+      : axios.isAxiosError(loginMutation.error) &&
+          loginMutation.error.code === "ERR_NETWORK"
+        ? "Unable to connect to the server. Check your connection."
+        : "Unable to log in. Check your credentials and try again."
+    : loginMutation.data && !loginMutation.data.success
+      ? loginMutation.data.message || "Login failed."
+      : "";
 
   return (
     <div
@@ -94,7 +105,7 @@ export default function LoginPage() {
       <img
         src={icon}
         alt="Logo"
-        className="absolute left-15 top-0 z-10 m-4 h-42 w-auto"
+        className="absolute left-6 top-6 z-10 h-20 w-auto sm:h-28"
       />
 
       <div className="relative z-10 flex w-full flex-col items-center">
@@ -106,43 +117,47 @@ export default function LoginPage() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
         >
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                {...field}
-                className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          <div>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="email"
+                  placeholder="Enter your email"
+                  className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              )}
+            />
+
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.email.message}
+              </p>
             )}
-          />
+          </div>
 
-          {errors.email && (
-            <p className="text-sm text-red-500">
-              {errors.email.message}
-            </p>
-          )}
+          <div>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="password"
+                  placeholder="Enter your password"
+                  className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              )}
+            />
 
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <Input
-                type="password"
-                placeholder="Enter your password"
-                {...field}
-                className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.password.message}
+              </p>
             )}
-          />
-
-          {errors.password && (
-            <p className="text-sm text-red-500">
-              {errors.password.message}
-            </p>
-          )}
+          </div>
 
           {apiError && (
             <p role="alert" className="text-sm text-red-600">
@@ -158,10 +173,12 @@ export default function LoginPage() {
           </Link>
 
           <Button
-            text={isSubmitting ? "Logging in..." : "Login"}
-            onClick={() => { }}
+            text={loginMutation.isPending ? "Logging in..." : "Login"}
+            onClick={() => {
+              void handleSubmit(onSubmit)();
+            }}
+            disabled={loginMutation.isPending}
             variant="primary"
-            disabled={isSubmitting}
             className="m-auto w-30 text-white"
           />
         </form>

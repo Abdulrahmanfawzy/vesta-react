@@ -1,4 +1,5 @@
 
+import axios from "axios";
 import api from "../../../services/api";
 
 import type {
@@ -27,12 +28,26 @@ export const AuthService = {
   async forgotPassword(
     credentials: ForgotPasswordCredentials
   ): Promise<ForgotPasswordResponse> {
-    const response = await api.post<ForgotPasswordResponse>(
-      "/auth/forgotPassword",
-      credentials
-    );
+    try {
+      const response = await api.post<ForgotPasswordResponse>(
+        "/auth/forgotPassword",
+        credentials
+      );
 
-    return response.data;
+      return response.data;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Forgot password request failed:", {
+          url: error.config?.url,
+          status: error.response?.status,
+          response: error.response?.data,
+        });
+      } else {
+        console.error("Unexpected forgot password error:", error);
+      }
+
+      throw error;
+    }
   },
 
   async verifyOtp(
