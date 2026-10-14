@@ -25,6 +25,14 @@ const reasonColors: Record<string, string> = {
   wrong_item: "#f4926b",
 };
 
+const fallbackReasonColors = [
+  "#161c36",
+  "#ef5d22",
+  "#f4926b",
+  "#f4e5d4",
+  "#d8d8d8",
+];
+
 export function useOverview() {
   return useQuery({
     queryKey: ["overview"],
@@ -60,11 +68,17 @@ export function useOverview() {
           previousReturns: 0,
         }));
 
-      const reasons: ReturnReason[] = data.reasons.map((reason) => ({
-        label: reasonLabels[reason.reason] ?? reason.reason,
-        percentage: reason.percentage,
-        color: reasonColors[reason.reason] ?? "#d8d8d8",
-      }));
+      const reasons: ReturnReason[] = data.reasons.map((reason, index) => {
+        const reasonKey = reason.label;
+
+        return {
+          label: reasonLabels[reasonKey] ?? reasonKey.replaceAll("_", " "),
+          percentage: reason.percentage,
+          color:
+            reasonColors[reasonKey] ??
+            fallbackReasonColors[index % fallbackReasonColors.length],
+        };
+      });
 
       const products: ReturnedProduct[] = data.top_products.map((product) => ({
         name: product.product_name,

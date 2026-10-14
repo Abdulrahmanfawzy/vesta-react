@@ -31,7 +31,7 @@ export interface OverviewPerformanceResponse {
 }
 
 export interface OverviewReasonResponse {
-  reason: string;
+  label: string;
   count: number;
   percentage: number;
 }
