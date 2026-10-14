@@ -20,7 +20,8 @@ export interface ReturnedProduct {
   name: string;
   returns: number;
   rate: number;
-  trend: number[];
+  trend: number[]; 
+  imageUrl: string | null;
 }
 
 export interface QuickAction {

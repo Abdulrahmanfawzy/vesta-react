@@ -9,7 +9,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import type { ReturnPerformancePoint } from '@/types/common.types';
+import type { ReturnPerformancePoint } from "@/types/common.types";
 
 type ReturnPerformanceChartProps = {
   data: ReturnPerformancePoint[];
