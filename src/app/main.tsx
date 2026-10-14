@@ -22,8 +22,12 @@ const queryClient = new QueryClient({
 
 createRoot(container).render(
     <StrictMode>
+
         <QueryClientProvider client={queryClient}>
+
             <App />
         </QueryClientProvider>
+
+
     </StrictMode>,
 );
