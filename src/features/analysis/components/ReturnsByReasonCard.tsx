@@ -1,28 +1,33 @@
+
 import {
   Card,
   CardContent,
 } from "@/components/ui/card";
 import { ReturnReasonsChart } from "@/components/shared/ReturnReasonsChart";
 
-import {
-  analysisReturnReasons,
-} from "../constants/analysis-data";
+import type { ReturnReason } from "@/types/common.types";
 
-export function ReturnsByReasonCard() {
+interface ReturnsByReasonCardProps {
+  data: ReturnReason[];
+}
+
+export function ReturnsByReasonCard({
+  data,
+}: ReturnsByReasonCardProps) {
   return (
     <Card className="h-full rounded-2xl">
-      <CardContent className=" p-4 sm:p-5">
+      <CardContent className="p-4 sm:p-5">
         <ReturnReasonsChart
-          data={analysisReturnReasons}
+          data={data}
           title="RETURNS BY REASON"
         />
-
-       
       </CardContent>
-       <div className=" p-4 mt-3 space-y-1 text-sm lg:text-[18px] text-neutral-600 ">
-          <p>• Distribution of Returns by Reason</p>
-          <p>• Percentage of Each Reason</p>
-        </div>
+
+      <div className="mt-3 space-y-1 p-4 text-sm text-neutral-600 lg:text-[18px]">
+        <p>• Distribution of Returns by Reason</p>
+        <p>• Percentage of Each Reason</p>
+      </div>
     </Card>
   );
 }
+
