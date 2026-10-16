@@ -1,12 +1,12 @@
-import { useOverview } from "../hooks/useOverview";
-import { ReturnsSummary } from "../components/ReturnsSummary";
 import { ReturnPerformanceChart } from "@/components/shared/ReturnPerformanceChart";
 import { ReturnReasonsChart } from "@/components/shared/ReturnReasonsChart";
-import { TopReturnedProducts } from "../components/TopReturnedProducts";
-import { QuickActions } from "../components/QuickActions";
-// import { returnPerformance, returnReasons } from "../constants/overview-data";
-export function OverviewPage() {
 
+import { QuickActions } from "../components/QuickActions";
+import { ReturnsSummary } from "../components/ReturnsSummary";
+import { TopReturnedProducts } from "../components/TopReturnedProducts";
+import { useOverview } from "../hooks/useOverview";
+
+export function OverviewPage() {
   const { data, isPending, isError, error, refetch, isFetching } =
     useOverview();
 
@@ -82,7 +82,14 @@ export function OverviewPage() {
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <TopReturnedProducts data={data.products} />
 
-        <QuickActions />
+        <QuickActions
+          reportData={{
+            summary: data.summary,
+            performance: data.performance,
+            reasons: data.reasons,
+            productDetails: data.productDetails,
+          }}
+        />
       </div>
     </section>
   );
