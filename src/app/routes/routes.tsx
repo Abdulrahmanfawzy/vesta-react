@@ -1,7 +1,6 @@
 import {
   createBrowserRouter,
   Navigate,
-  Route,
   type RouteObject,
 } from "react-router-dom";
 
@@ -73,6 +72,26 @@ const routes: RouteObject[] = [
             path: "analysis",
             element: <AnalysisPage />,
           },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+          {
+            path: "faqs",
+            element: <Faqs />,
+          },
+          {
+            path: "contactSupport",
+            element: <ContactSupport />,
+          },
+          {
+            path: "backtosupport/:ticketId",
+            element: <BackTosupport />,
+          },
+          {
+            path: "mySupportTickets",
+            element: <ReturnsTable />,
+          },
         ],
       },
     ],
@@ -83,56 +102,6 @@ const routes: RouteObject[] = [
     path: "*",
     element: <Navigate to={PATHS.login} replace />,
   },
-
-
-
-
-
-
-
-
-{
-  path: PATHS.dashboard,
-  element: <DashboardLayout />,
-  children: [
-    {
-      index: true,
-      element: <Navigate to={PATHS.settings} replace />,
-    },
-    {
-      path: "settings",
-      element: <Settings />,
-    },
-    {
-      path: "faqs",
-      element: <Faqs />,
-    },
-    {
-      path: "contactSupport",
-      element: <ContactSupport />,
-    },
-    {
-      path: "backtosupport/:ticketId",
-      element: <BackTosupport />,
-    },
-    {
-      path: "mySupportTickets",
-      element: <ReturnsTable />,
-    },
-  ],
-}
-
-
-
-
-
-
-// { path: "/settings", element: <Settings /> },
-// { path: "/fAQs", element: <Faqs /> },
-// { path: "/contactSupport", element: <ContactSupport /> },
-// { path: "/backtosupport/:ticketId", element: <BackTosupport /> },
-// { path: "/mySupportTickets", element: <Tabletickets /> },
-
 ];
 
 export const router = createBrowserRouter(routes);

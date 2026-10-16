@@ -1,3 +1,4 @@
+
 import logo from "@/assets/b321ca5a3c314e620c5ad260e856babb89b6b16c.png";
 import {
   BarChart3,
@@ -7,7 +8,10 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import {
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
 
 import { PATHS } from "@/app/routes/paths";
 
@@ -36,7 +40,7 @@ const navigationItems: NavigationItem[] = [
   {
     label: "Settings",
     icon: Settings,
-       to: PATHS.settings,
+    to: PATHS.settings,
   },
 ];
 
@@ -45,7 +49,27 @@ type SidebarProps = {
   onClose: () => void;
 };
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({
+  isOpen,
+  onClose,
+}: SidebarProps) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Remove the existing session-based authentication.
+    sessionStorage.clear();
+
+    // Remove token keys that may exist in local storage.
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("refreshToken");
+
+    onClose();
+
+    navigate(PATHS.login, { replace: true });
+  };
+
   return (
     <>
       {isOpen && (
@@ -58,30 +82,38 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 lg:w-20 w-15 p-1 flex-col bg-primary text-white ${isOpen ? "flex" : "hidden"
-          } lg:flex`}
+        className={`fixed inset-y-0 left-0 z-40 lg:w-20 w-15 p-1 flex-col bg-primary text-white ${
+          isOpen ? "flex" : "hidden"
+        } lg:flex`}
         aria-label="Main navigation"
       >
         <div className="flex h-16 shrink-0 items-center justify-center">
-          <img src={logo} alt="Vesta" className="size-29 object-contain" />
+          <img
+            src={logo}
+            alt="Vesta"
+            className="size-29 object-contain"
+          />
         </div>
 
         <nav className="flex flex-col items-center gap-2 pt-16">
           {navigationItems.map((item) => {
             const Icon = item.icon;
+
             const className =
               "group flex w-full shrink-0 flex-col items-center gap-0.5 py-1.5 text-[9px] leading-tight transition-colors";
 
             const content = (
               <>
                 <span
-                  className="flex lg:size-7.5 sm:size-6 items-center justify-center rounded-lg 
-                transition-colors group-hover:bg-white/10"
+                  className="flex lg:size-7.5 sm:size-6 items-center justify-center rounded-lg
+                  transition-colors group-hover:bg-white/10"
                 >
                   <Icon />
                 </span>
 
-                <span className="lg:text-sm sm:text-xs">{item.label}</span>
+                <span className="lg:text-sm sm:text-xs">
+                  {item.label}
+                </span>
               </>
             );
 
@@ -118,13 +150,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="mt-auto flex shrink-0 justify-center pb-8">
           <button
             type="button"
+            onClick={handleLogout}
             className="flex flex-col items-center gap-0.5 text-[9px] leading-tight text-secondary"
           >
             <span className="flex size-7 items-center justify-center rounded-lg hover:bg-white/10">
               <LogOut size={30} strokeWidth={1.8} />
             </span>
 
-            <span className="text-[16px]">Logout</span>
+            <span className="text-[16px]">
+              Logout
+            </span>
           </button>
         </div>
       </aside>

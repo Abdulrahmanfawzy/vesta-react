@@ -1,3 +1,4 @@
+
 import {
   Cell,
   Funnel,
@@ -13,9 +14,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  returnFunnel,
-} from "../constants/analysis-data";
+interface FunnelStage {
+  label: string;
+  value: number;
+  percentage: string;
+}
+
+interface ReturnFunnelCardProps {
+  stages: FunnelStage[];
+}
 
 const funnelColors = [
   "#161c36",
@@ -24,7 +31,14 @@ const funnelColors = [
   "#d8d8d8",
 ];
 
-export function ReturnFunnelCard() {
+export function ReturnFunnelCard({
+  stages,
+}: ReturnFunnelCardProps) {
+  const chartData = stages.map((stage) => ({
+    ...stage,
+    name: stage.label,
+  }));
+
   return (
     <Card className="h-full rounded-2xl">
       <CardContent className="p-4 sm:p-5">
@@ -32,11 +46,8 @@ export function ReturnFunnelCard() {
           RETURN FUNNEL
         </CardTitle>
 
-        <div className="h-[185px] mb-3 grid grid-cols-2 justify-between">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
+        <div className="mb-3 grid h-[185px] grid-cols-2 justify-between">
+          <ResponsiveContainer width="100%" height="100%">
             <FunnelChart>
               <Tooltip
                 contentStyle={{
@@ -48,7 +59,7 @@ export function ReturnFunnelCard() {
 
               <Funnel
                 dataKey="value"
-                data={returnFunnel}
+                data={chartData}
                 isAnimationActive={false}
                 lastShapeType="rectangle"
               >
@@ -60,44 +71,41 @@ export function ReturnFunnelCard() {
                   fontSize={11}
                 />
 
-                {returnFunnel.map((entry, index) => (
+                {chartData.map((stage, index) => (
                   <Cell
-                    key={entry.label}
-                    fill={
-                      funnelColors[index] ??
-                      "#161c36"
-                    }
+                    key={stage.label}
+                    fill={funnelColors[index] ?? "#161c36"}
                   />
                 ))}
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>
-           <div className="mt-2 text-center space-y-3 text-[8px] text-neutral-500 lg:text-[12px]">
-          {returnFunnel.map((stage) => (
-            <div
-              key={stage.label}
-              className="flex flex-col"
-            >
-              <span className="font-bold">
-                {stage.label}
-              </span>
 
-              <span>
-                {stage.value.toLocaleString()} (
-                {stage.percentage})
-              </span>
-            </div>
-          ))}
-        </div>
+          <div className="mt-2 space-y-3 text-center text-[8px] text-neutral-500 lg:text-[12px]">
+            {stages.map((stage) => (
+              <div
+                key={stage.label}
+                className="flex flex-col"
+              >
+                <span className="font-bold">
+                  {stage.label}
+                </span>
+
+                <span>
+                  {stage.value.toLocaleString()} (
+                  {stage.percentage})
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="space-y-1 text-sm text-neutral-600 lg:text-[18px]">
           <p>• Return Process Funnel</p>
           <p>• Conversion Rate Between Stages</p>
         </div>
-
-       
       </CardContent>
     </Card>
   );
 }
+

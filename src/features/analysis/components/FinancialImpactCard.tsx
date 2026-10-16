@@ -1,3 +1,4 @@
+
 import {
   CartesianGrid,
   Line,
@@ -14,12 +15,43 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  financialImpact,
-  financialMetrics,
-} from "../constants/analysis-data";
+import type {
+  FinancialImpactData,
+} from "../types/analysis.types";
 
-export function FinancialImpactCard() {
+interface FinancialImpactCardProps {
+  data: FinancialImpactData | undefined;
+  timeline: { date: string; impact: number }[];
+}
+
+export function FinancialImpactCard({
+  data,
+  timeline,
+}: FinancialImpactCardProps) {
+  const currency = data?.currency ?? "EGP";
+
+  const formatAmount = (amount: number) =>
+    `${currency} ${amount.toLocaleString("en-US")}`;
+
+  const metrics = [
+    {
+      label: "Total Refunds",
+      value: data ? formatAmount(data.total_refunds) : "—",
+    },
+    {
+      label: "Cost Of Returns",
+      value: data ? formatAmount(data.cost_of_returns) : "—",
+    },
+    {
+      label: "Net Impact",
+      value: data ? formatAmount(data.net_impact) : "—",
+    },
+    {
+      label: "Return Rate (%)",
+      value: data ? `${data.return_rate}%` : "—",
+    },
+  ];
+
   return (
     <Card className="h-full rounded-2xl">
       <CardContent className="p-4 sm:p-5">
@@ -28,11 +60,10 @@ export function FinancialImpactCard() {
         </CardTitle>
 
         <div className="grid grid-cols-4 gap-1.5">
-          {financialMetrics.map((metric) => (
+          {metrics.map((metric) => (
             <div
               key={metric.label}
-              className="rounded border border-neutral-200 bg-white px-1 py-1.5 text-center 
-              shadow-sm"
+              className="rounded border border-neutral-200 bg-white px-1 py-1.5 text-center shadow-sm"
             >
               <p className="text-[6px] leading-tight text-neutral-600 lg:text-[9px]">
                 {metric.label}
@@ -46,12 +77,9 @@ export function FinancialImpactCard() {
         </div>
 
         <div className="mt-3 h-[135px]">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={financialImpact}
+              data={timeline}
               margin={{
                 top: 5,
                 right: 4,
@@ -67,22 +95,22 @@ export function FinancialImpactCard() {
 
               <XAxis
                 dataKey="date"
-                tick={{
-                  fontSize: 10,
-                }}
+                tick={{ fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
 
               <YAxis
-                tick={{
-                  fontSize: 10,
-                }}
+                tick={{ fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />
 
               <Tooltip
+                formatter={(value) => [
+                  formatAmount(Number(value)),
+                  "Impact",
+                ]}
                 contentStyle={{
                   borderRadius: 8,
                   border: "1px solid #e5e5e5",
@@ -96,9 +124,7 @@ export function FinancialImpactCard() {
                 stroke="#161c36"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{
-                  r: 4,
-                }}
+                activeDot={{ r: 4 }}
               />
             </LineChart>
           </ResponsiveContainer>
