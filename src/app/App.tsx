@@ -1,8 +1,14 @@
-
-import AppRoutes from "./routes/routes";
+import { RouterProvider } from "react-router-dom";
+import { Toaster } from "sonner";
+import { router } from "./routes/routes";
 
 function App() {
-  return <AppRoutes />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster position="top-right" />
+    </>
+  );
 }
 
 export default App;

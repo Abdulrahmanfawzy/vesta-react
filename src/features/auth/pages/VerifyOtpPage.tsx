@@ -1,28 +1,40 @@
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
-import LoginHero from "../../../assets/login-hero.jpg";
-import Input from "../../../components/ui/Input";
-import Button from "../../../components/ui/Button";
-import icon from "../../../assets/icon.png";
+import LoginHero from "@/assets/login-hero.jpg";
+import icon from "@/assets/icon.png";
 
 import {
   VerifyOtpSchema,
   type VerifyOtpType,
-} from "../../../schemas/verifyOtp.schema";
+} from "@/schemas/verifyOtp.schema";
+
+import { AuthService } from "@/features/auth/services/auth.services";
+import { PATHS } from "@/app/routes/paths";
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+
+import Button from "@/components/ui/button";
 
 export default function VerifyOtpPage() {
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const email = (
+    location.state as { email?: string } | null
+  )?.email;
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<VerifyOtpType>({
     resolver: zodResolver(VerifyOtpSchema),
     defaultValues: {
@@ -30,103 +42,158 @@ export default function VerifyOtpPage() {
     },
   });
 
-  const onSubmit = async (data: VerifyOtpType) => {
-    setError("");
-    setSuccess("");
+  const verifyOtpMutation = useMutation({
+    mutationFn: (data: VerifyOtpType) => {
+      if (!email) {
+        throw new Error(
+          "Email is missing. Please start from Forgot Password."
+        );
+      }
 
-    try {
-      console.log(data);
+      return AuthService.verifyOtp({
+        email,
+        code: data.otp,
+      });
+    },
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    onSuccess: (response) => {
+      const resetToken = response.data?.reset_token;
 
-      setSuccess("OTP verified successfully!");
+      if (!response.success || !resetToken) {
+        return;
+      }
 
-      navigate("/reset-password");
-    } catch {
-      setError("Failed to verify OTP. Please try again.");
-    }
+      navigate(PATHS.resetPasswordPath, {
+        state: { resetToken },
+      });
+    },
+  });
+
+  const onSubmit = (data: VerifyOtpType) => {
+    verifyOtpMutation.mutate(data);
   };
 
+  const serverMessage = axios.isAxiosError(
+    verifyOtpMutation.error
+  )
+    ? verifyOtpMutation.error.response?.data?.message
+    : verifyOtpMutation.error instanceof Error
+      ? verifyOtpMutation.error.message
+      : undefined;
 
-return (
-  <div
-    style={{ backgroundImage: `url(${LoginHero})` }}
-    className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
-  >
-    {/* Overlay */}
-    <div className="absolute inset-0 bg-black/18" />
+  const apiError = verifyOtpMutation.isError
+    ? typeof serverMessage === "string"
+      ? serverMessage
+      : "Verification failed. Please try again."
+    : verifyOtpMutation.isSuccess &&
+        (!verifyOtpMutation.data.success ||
+          !verifyOtpMutation.data.data?.reset_token)
+      ? verifyOtpMutation.data.message ||
+        "Verification failed. Reset token is missing."
+      : "";
 
-    {/* Logo */}
-    <img
-      src={icon}
-      alt="Logo"
-      className="absolute top-0 left-15 z-10 m-4 h-42 w-auto"
-    />
+  const isLoading = verifyOtpMutation.isPending;
 
-    {/* Content */}
-    <div className="relative z-10 flex w-full flex-col items-center">
-      <h1 className="text-2xl font-semibold text-white mb-2">
-        Verify OTP
-      </h1>
+  const handleResendCode = () => {
+    if (!email) {
+      navigate(PATHS.forgotPassword);
+      return;
+    }
 
-     <p className="text-sm font-semibold text-white mb-6 text-center max-w-sm">
-  Enter the verification code sent to your email.
-</p>
+    // TODO: Connect to the resend OTP API.
+  };
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
-      >
-        <Controller
-          name="otp"
-          control={control}
-          render={({ field }) => (
-            <Input
-              type="text"
-              placeholder="Enter OTP"
-              maxLength={6}
-              inputMode="numeric"
-              {...field}
-              className="w-full box-border rounded-md border border-gray-300 px-5 py-3 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+  return (
+    <div
+      style={{ backgroundImage: `url(${LoginHero})` }}
+      className="relative flex min-h-screen flex-col items-center justify-center bg-cover bg-center px-4"
+    >
+      <div className="absolute inset-0 bg-black/40" />
+
+      <img
+        src={icon}
+        alt="Logo"
+        className="absolute left-6 top-6 z-10 h-20 w-auto sm:h-28"
+      />
+
+      <div className="relative z-10 flex w-full flex-col items-center">
+        <h1 className="mb-2 text-2xl font-semibold text-white">
+          Verify OTP
+        </h1>
+
+        <p className="mb-6 max-w-sm text-center text-sm font-semibold text-white">
+          Enter the verification code sent to your email.
+
+          {email && (
+            <span className="mt-1 block">{email}</span>
           )}
-        />
+        </p>
 
-        {errors.otp && (
-          <p className="text-sm text-red-500">
-            {errors.otp.message}
-          </p>
-        )}
-
-        {error && (
-          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-            {error}
-          </p>
-        )}
-
-        {success && (
-          <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-600">
-            {success}
-          </p>
-        )}
-
-        <Button
-          text={isSubmitting ? "Verifying..." : "Verify"}
-          onClick={() => {}}
-          variant="primary"
-          disabled={isSubmitting}
-          className="w-full text-white"
-        />
-
-        <button
-          type="button"
-          className="text-sm text-gray-500 hover:text-gray-900"
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
         >
-          Resend Code
-        </button>
-      </form>
-    </div>
-  </div>
-);
+          <Controller
+            name="otp"
+            control={control}
+            render={({ field }) => (
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={6}
+                  value={field.value}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    verifyOtpMutation.reset();
+                  }}
+                >
+                  <InputOTPGroup>
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                      <InputOTPSlot
+                        key={index}
+                        index={index}
+                        className="h-12 w-12 rounded-md border border-gray-300 text-lg font-semibold"
+                      />
+                    ))}
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+            )}
+          />
 
+          {errors.otp && (
+            <p className="text-center text-sm text-red-500">
+              {errors.otp.message}
+            </p>
+          )}
+
+          {apiError && (
+            <p
+              role="alert"
+              className="text-center text-sm text-red-600"
+            >
+              {apiError}
+            </p>
+          )}
+
+          <Button
+            text={isLoading ? "Verifying..." : "Verify"}
+            variant="primary"
+            onClick={handleSubmit(onSubmit)}
+            disabled={isLoading}
+            className="w-full text-white"
+          />
+
+          <button
+            type="button"
+            onClick={handleResendCode}
+            disabled={isLoading}
+            className="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-50"
+          >
+            Resend Code
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
+
