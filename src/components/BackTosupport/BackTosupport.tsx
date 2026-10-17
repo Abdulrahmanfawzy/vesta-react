@@ -3,8 +3,7 @@ import IconM from "../IconM/IconM";
 import Conversation from "../Conversation/Conversation";
 import TextInfo from "../TextInfo/TextInfo";
 import RelatedToInfo from "../RelatedToInfo/RelatedToInfo";
-import Attachments from "../Attachments/Attachments";
-import OverviewSettings from "../OverviewSettings/OverviewSettings";
+// import OverviewSettings from "../OverviewSettings/OverviewSettings";
 import { Link, useParams } from "react-router-dom";
 import { useChatMessages } from "@/features/auth/hooks/useconversation";
 import QuickActions from "../QuickAction/QuickAction";
@@ -69,7 +68,7 @@ export default function BackTosupport() {
           </svg>
         </Link>
 
-        <OverviewSettings name="Back To Support Tickets" />
+        {/* <OverviewSettings name="Back To Support Tickets" /> */}
       </div>
 
       <div className="container mx-auto py-12 flex flex-col lg:flex-row gap-6 items-start">
@@ -160,7 +159,6 @@ export default function BackTosupport() {
             subject={ticket.subject}
           />
 
-          <Attachments />
         </div>
       </div>
     </div>

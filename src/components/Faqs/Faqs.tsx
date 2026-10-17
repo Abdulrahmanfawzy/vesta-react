@@ -100,7 +100,7 @@
 
 import { useState } from "react";
 
-import OverviewSettings from "../OverviewSettings/OverviewSettings";
+import OverviewSettings from "../shared/OverviewSettings/OverviewSettings";
 import { useFaqs } from "@/features/auth/hooks/usefaq";
 import Select from "../shared/Select/Select";
 
