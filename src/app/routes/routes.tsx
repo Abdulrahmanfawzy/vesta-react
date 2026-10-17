@@ -11,7 +11,7 @@ import AnalysisPage from "../pages/AnalysisPage";
 import ReturnsMainPage from "@/features/Returns/components/ReturnsMainPage";
 import Settings from "@/components/Settings/Settings";
 import Faqs from "@/components/Faqs/Faqs";
-import ContactSupport from "@/components/ContactSupport/ContactSupport";
+// import ContactSupport from "@/components/ContactSupport";
 import BackTosupport from "@/components/BackTosupport/BackTosupport";
 import ReturnsTable from "@/features/Returns/components/ReturnsTable";
 
@@ -46,7 +46,7 @@ const routes: RouteObject[] = [
 
           { path: "settings", element: <Settings /> },
           { path: "faqs", element: <Faqs /> },
-          { path: "contactSupport", element: <ContactSupport /> },
+          // { path: "contactSupport", element: <ContactSupport /> },
           { path: "backtosupport/:ticketId", element: <BackTosupport /> },
           { path: "mySupportTickets", element: <ReturnsTable /> },
         ],
