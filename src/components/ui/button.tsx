@@ -1,22 +1,22 @@
+import type { ButtonHTMLAttributes } from "react";
+
 type ButtonProps = {
   text: string;
-  onClick: () => void;
   variant?: "primary" | "secondary";
-  disabled?: boolean;
-  className?: string;
-};
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children">;
 
 export default function Button({
   text,
-  onClick,
   variant = "primary",
+  type = "button",
   disabled = false,
   className = "",
+  ...rest
 }: ButtonProps) {
   return (
     <button
-      type="submit"
-      onClick={onClick}
+      {...rest}
+      type={type}
       disabled={disabled}
       className={`rounded px-4 py-2 ${
         variant === "primary"
@@ -30,8 +30,3 @@ export default function Button({
     </button>
   );
 }
-<<<<<<< HEAD
-
-export { Button, buttonVariants };
-=======
->>>>>>> 8e740b7dfa2a7b057d034ad991f42a3ba331a891

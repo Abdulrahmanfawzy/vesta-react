@@ -1,20 +1,21 @@
-
+import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+import { PATHS } from "../routes/paths";
 import LoginHero from "@/assets/login-hero.jpg";
 import icon from "@/assets/icon.png";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/button";
-
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginType } from "@/schemas/login.schema";
 import { AuthService } from "@/features/auth/services/auth.services";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const submittingRef = useRef(false);
 
   const {
     control,
@@ -39,7 +40,7 @@ export default function LoginPage() {
       if (!response.success) return;
 
       if (response.data?.requires_2fa) {
-        navigate("/verify-otp", {
+        navigate(PATHS.verifyOtp, {
           state: { email: variables.email },
         });
         return;
@@ -48,6 +49,7 @@ export default function LoginPage() {
       const { access_token, refresh_token } = response.data ?? {};
 
       if (!access_token) {
+        console.error("Login succeeded without an access token.");
         return;
       }
 
@@ -57,7 +59,7 @@ export default function LoginPage() {
         sessionStorage.setItem("refresh_token", refresh_token);
       }
 
-      navigate("/dashboard", { replace: true });
+      navigate(PATHS.overview, { replace: true });
     },
 
     onError: (error: unknown) => {
@@ -65,6 +67,9 @@ export default function LoginPage() {
         console.error("Login API Error:", {
           message: error.message,
           code: error.code,
+          url: error.config?.baseURL
+            ? `${error.config.baseURL}${error.config.url ?? ""}`
+            : error.config?.url,
           status: error.response?.status,
           response: error.response?.data,
         });
@@ -72,11 +77,16 @@ export default function LoginPage() {
         console.error("Unexpected login error:", error);
       }
     },
+
+    onSettled: () => {
+      submittingRef.current = false;
+    },
   });
 
   const onSubmit = (data: LoginType) => {
-    if (loginMutation.isPending) return;
-
+    // Guard against double submission before React re-renders.
+    if (submittingRef.current || loginMutation.isPending) return;
+    submittingRef.current = true;
     loginMutation.mutate(data);
   };
 
@@ -109,12 +119,11 @@ export default function LoginPage() {
       />
 
       <div className="relative z-10 flex w-full flex-col items-center">
-        <h1 className="mb-6 text-2xl font-semibold text-white">
-          Login
-        </h1>
+        <h1 className="mb-6 text-2xl font-semibold text-white">Login</h1>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
+          noValidate
           className="flex w-full max-w-md flex-col gap-4 rounded-lg bg-white p-9 shadow-md"
         >
           <div>
@@ -126,6 +135,7 @@ export default function LoginPage() {
                   {...field}
                   type="email"
                   placeholder="Enter your email"
+                  autoComplete="email"
                   className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               )}
@@ -147,6 +157,7 @@ export default function LoginPage() {
                   {...field}
                   type="password"
                   placeholder="Enter your password"
+                  autoComplete="current-password"
                   className="box-border w-full rounded-md border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               )}
@@ -166,17 +177,15 @@ export default function LoginPage() {
           )}
 
           <Link
-            to="/forgot-password"
+            to={PATHS.forgotPassword}
             className="text-right text-sm text-blue-600 hover:text-blue-800"
           >
             Forgot password?
           </Link>
 
           <Button
+            type="submit"
             text={loginMutation.isPending ? "Logging in..." : "Login"}
-            onClick={() => {
-              void handleSubmit(onSubmit)();
-            }}
             disabled={loginMutation.isPending}
             variant="primary"
             className="m-auto w-30 text-white"

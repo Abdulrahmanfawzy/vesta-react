@@ -1,9 +1,4 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  Route,
-  type RouteObject,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, type RouteObject } from "react-router-dom";
 
 import LoginPage from "../pages/LoginPage";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
@@ -18,7 +13,6 @@ import Settings from "@/components/Settings/Settings";
 import Faqs from "@/components/Faqs/Faqs";
 import ContactSupport from "@/components/ContactSupport/ContactSupport";
 import BackTosupport from "@/components/BackTosupport/BackTosupport";
-
 import ReturnsTable from "@/features/Returns/components/ReturnsTable";
 
 import { PATHS } from "./paths";
@@ -30,22 +24,10 @@ const routes: RouteObject[] = [
   {
     element: <PublicRoute />,
     children: [
-      {
-        path: PATHS.login,
-        element: <LoginPage />,
-      },
-      {
-        path: PATHS.forgotPassword,
-        element: <ForgotPasswordPage />,
-      },
-      {
-        path: PATHS.verifyOtp,
-        element: <VerifyOtpPage />,
-      },
-      {
-        path: PATHS.resetPasswordPath,
-        element: <ResetPasswordPage />,
-      },
+      { path: PATHS.login, element: <LoginPage /> },
+      { path: PATHS.forgotPassword, element: <ForgotPasswordPage /> },
+      { path: PATHS.verifyOtp, element: <VerifyOtpPage /> },
+      { path: PATHS.resetPasswordPath, element: <ResetPasswordPage /> },
     ],
   },
 
@@ -57,82 +39,23 @@ const routes: RouteObject[] = [
         path: PATHS.dashboard,
         element: <DashboardLayout />,
         children: [
-          {
-            index: true,
-            element: <Navigate to={PATHS.overview} replace />,
-          },
-          {
-            path: "overview",
-            element: <OverviewPage />,
-          },
-          {
-            path: "returns",
-            element: <ReturnsMainPage />,
-          },
-          {
-            path: "analysis",
-            element: <AnalysisPage />,
-          },
+          { index: true, element: <Navigate to={PATHS.overview} replace /> },
+          { path: "overview", element: <OverviewPage /> },
+          { path: "returns", element: <ReturnsMainPage /> },
+          { path: "analysis", element: <AnalysisPage /> },
+
+          { path: "settings", element: <Settings /> },
+          { path: "faqs", element: <Faqs /> },
+          { path: "contactSupport", element: <ContactSupport /> },
+          { path: "backtosupport/:ticketId", element: <BackTosupport /> },
+          { path: "mySupportTickets", element: <ReturnsTable /> },
         ],
       },
     ],
   },
 
   // Fallback
-  {
-    path: "*",
-    element: <Navigate to={PATHS.login} replace />,
-  },
-
-
-
-
-
-
-
-
-{
-  path: PATHS.dashboard,
-  element: <DashboardLayout />,
-  children: [
-    {
-      index: true,
-      element: <Navigate to={PATHS.settings} replace />,
-    },
-    {
-      path: "settings",
-      element: <Settings />,
-    },
-    {
-      path: "faqs",
-      element: <Faqs />,
-    },
-    {
-      path: "contactSupport",
-      element: <ContactSupport />,
-    },
-    {
-      path: "backtosupport/:ticketId",
-      element: <BackTosupport />,
-    },
-    {
-      path: "mySupportTickets",
-      element: <ReturnsTable />,
-    },
-  ],
-}
-
-
-
-
-
-
-// { path: "/settings", element: <Settings /> },
-// { path: "/fAQs", element: <Faqs /> },
-// { path: "/contactSupport", element: <ContactSupport /> },
-// { path: "/backtosupport/:ticketId", element: <BackTosupport /> },
-// { path: "/mySupportTickets", element: <Tabletickets /> },
-
+  { path: "*", element: <Navigate to={PATHS.login} replace /> },
 ];
 
 export const router = createBrowserRouter(routes);
